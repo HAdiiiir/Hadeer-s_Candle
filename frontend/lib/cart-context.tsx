@@ -34,10 +34,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isClient, setIsClient] = useState(false)
   const { user } = useAuth()
+
+  // Set isClient to true when component mounts
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Fetch cart when user logs in
   useEffect(() => {
+    if (!isClient) return
+
     if (user) {
       fetchCart()
     } else {
@@ -45,7 +53,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setItems([])
       setTotal(0)
     }
-  }, [user])
+  }, [user, isClient])
 
   // Fetch cart from API
   const fetchCart = async () => {
@@ -161,4 +169,3 @@ export function useCart() {
   }
   return context
 }
-

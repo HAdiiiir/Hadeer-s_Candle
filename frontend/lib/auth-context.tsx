@@ -24,11 +24,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isClient, setIsClient] = useState(false)
+
+  // Set isClient to true when component mounts
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Check if user is logged in on initial load
   useEffect(() => {
+    if (!isClient) return
+
     const checkLoggedIn = async () => {
       try {
         const token = localStorage.getItem("token")
@@ -45,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     checkLoggedIn()
-  }, [])
+  }, [isClient])
 
   // Login function
   const login = async (email: string, password: string) => {
@@ -124,4 +132,3 @@ export function useAuth() {
   }
   return context
 }
-

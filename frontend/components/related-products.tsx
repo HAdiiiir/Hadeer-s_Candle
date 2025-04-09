@@ -20,7 +20,7 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
 
   return (
     <section className="mt-16">
-      <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
+      <h2 className="text-2xl font-bold text-purple-900 mb-6">You May Also Like</h2>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />
@@ -29,4 +29,3 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
     </section>
   )
 }
-

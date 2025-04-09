@@ -34,7 +34,9 @@ export function OrdersList({ orders }: { orders: Order[] }) {
               <TableCell>
                 <span
                   className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    order.status === "Delivered" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                    order.status === "Delivered"
+                      ? "bg-[#A569BD] text-[#6C3483]" // موف فاتح للحالة "Delivered"
+                      : "bg-[#E8D9F5] text-[#8E44AD]" // موف فاتح للحالة الأخرى
                   }`}
                 >
                   {order.status}
@@ -46,7 +48,7 @@ export function OrdersList({ orders }: { orders: Order[] }) {
                 <Button variant="ghost" size="sm" asChild>
                   <Link href={`/orders/${order.id}`}>
                     <span className="sr-only">View order</span>
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4 text-[#8E44AD] hover:text-[#6C3483]" />
                   </Link>
                 </Button>
               </TableCell>
@@ -57,4 +59,3 @@ export function OrdersList({ orders }: { orders: Order[] }) {
     </div>
   )
 }
-

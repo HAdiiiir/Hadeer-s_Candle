@@ -27,47 +27,46 @@ export function Header() {
   const cartItemCount = items.length
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
-      <div className="container flex h-16 items-center px-4 md:px-6">
+    <header className="sticky top-0 z-50 w-full border-b bg-white shadow-md">
+      <div className="container flex h-20 items-center px-4 md:px-6">
         {isMobile ? (
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="mr-2">
+              <Button variant="ghost" size="icon" className="mr-2 text-[#6B46C1]">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-white">
+              <div className="flex flex-col items-center mb-8 mt-4">
+                <Link href="/" className="flex items-center space-x-2">
+                  <span className="brand-logo text-2xl font-bold text-[#6B46C1]">Hadeer&apos;s Candle</span>
+                </Link>
+              </div>
               <nav className="flex flex-col gap-4">
-                <Link href="/" className="text-lg font-medium transition-colors hover:text-primary">
+                <Link href="/" className="text-lg font-medium transition-colors hover:text-[#6B46C1]">
                   Home
                 </Link>
-                <Link href="/products" className="text-lg font-medium transition-colors hover:text-primary">
+                <Link href="/products" className="text-lg font-medium transition-colors hover:text-[#6B46C1]">
                   Products
                 </Link>
-                <Link
-                  href="/products?category=cups"
-                  className="text-lg font-medium transition-colors hover:text-primary"
-                >
+                <Link href="/products?category=cups" className="text-lg font-medium transition-colors hover:text-[#6B46C1]">
                   Cup Candles
                 </Link>
-                <Link
-                  href="/products?category=shaped"
-                  className="text-lg font-medium transition-colors hover:text-primary"
-                >
+                <Link href="/products?category=shaped" className="text-lg font-medium transition-colors hover:text-[#6B46C1]">
                   Shaped Candles
                 </Link>
                 {user && (
-                  <Link href="/orders" className="text-lg font-medium transition-colors hover:text-primary">
+                  <Link href="/orders" className="text-lg font-medium transition-colors hover:text-[#6B46C1]">
                     My Orders
                   </Link>
                 )}
                 {!user ? (
-                  <Link href="/login" className="text-lg font-medium transition-colors hover:text-primary">
+                  <Link href="/login" className="text-lg font-medium transition-colors hover:text-[#6B46C1]">
                     Login
                   </Link>
                 ) : (
-                  <Button variant="ghost" onClick={logout} className="justify-start px-0">
+                  <Button variant="ghost" onClick={logout} className="justify-start px-0 text-[#6B46C1]">
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </Button>
@@ -77,52 +76,56 @@ export function Header() {
           </Sheet>
         ) : null}
         <Link href="/" className="mr-6 flex items-center space-x-2">
-          <span className="text-xl font-bold">Hadeer&apos;s Candle</span>
+          <span className="brand-logo text-2xl font-bold text-[#6B46C1]">Hadeer&apos;s Candle</span>
         </Link>
         {!isMobile && (
-          <nav className="flex flex-1 items-center gap-6 text-sm">
-            <Link href="/" className="font-medium transition-colors hover:text-primary">
+          <nav className="flex flex-1 items-center gap-8 text-sm">
+            <Link href="/" className="font-medium transition-colors hover:text-[#6B46C1]">
               Home
             </Link>
-            <Link href="/products" className="font-medium transition-colors hover:text-primary">
+            <Link href="/products" className="font-medium transition-colors hover:text-[#6B46C1]">
               Products
             </Link>
-            <Link href="/products?category=cups" className="font-medium transition-colors hover:text-primary">
+            <Link href="/products?category=cups" className="font-medium transition-colors hover:text-[#6B46C1]">
               Cup Candles
             </Link>
-            <Link href="/products?category=shaped" className="font-medium transition-colors hover:text-primary">
+            <Link href="/products?category=shaped" className="font-medium transition-colors hover:text-[#6B46C1]">
               Shaped Candles
             </Link>
           </nav>
         )}
-        <div className="flex flex-1 items-center justify-end gap-2">
+        <div className="flex flex-1 items-center justify-end gap-3">
           {isSearchOpen ? (
             <div className="flex items-center">
-              <Input type="search" placeholder="Search..." className="w-[200px] md:w-[300px]" />
-              <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(false)}>
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="w-[200px] md:w-[300px] border-[#6B46C1] focus:ring-[#6B46C1]"
+              />
+              <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(false)} className="text-[#6B46C1]">
                 <X className="h-5 w-5" />
                 <span className="sr-only">Close search</span>
               </Button>
             </div>
           ) : (
-            <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)}>
+            <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)} className="text-[#6B46C1]">
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </Button>
           )}
           {!isMobile && (
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" asChild className="text-[#6B46C1]">
               <Link href="/favorites">
                 <Heart className="h-5 w-5" />
                 <span className="sr-only">Favorites</span>
               </Link>
             </Button>
           )}
-          <Button variant="ghost" size="icon" asChild className="relative">
+          <Button variant="ghost" size="icon" asChild className="relative text-[#6B46C1]">
             <Link href="/cart">
               <ShoppingBag className="h-5 w-5" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#6B46C1] text-[10px] text-white">
                   {cartItemCount}
                 </span>
               )}
@@ -130,7 +133,7 @@ export function Header() {
             </Link>
           </Button>
           {!user ? (
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" asChild className="text-[#6B46C1]">
               <Link href="/login">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Login</span>
@@ -139,12 +142,12 @@ export function Header() {
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="text-[#6B46C1]">
                   <User className="h-5 w-5" />
                   <span className="sr-only">User menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-white border border-[#6B46C1]/20 shadow-lg">
                 <DropdownMenuItem asChild>
                   <Link href="/account">My Account</Link>
                 </DropdownMenuItem>
@@ -169,4 +172,3 @@ export function Header() {
     </header>
   )
 }
-

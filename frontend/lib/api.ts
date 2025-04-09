@@ -32,22 +32,136 @@ async function fetchAPI(endpoint: string, options: RequestInit = {}) {
   return response.json()
 }
 
+// Mock API responses for development
+const mockProducts = [
+  {
+    _id: "1",
+    name: "Luxury Gel Wax Candle",
+    price: 310,
+    size: "65g",
+    type: "Gel Wax",
+    fragrance: "Vanilla & Amber",
+    images: ["/images/gel-candle.png"],
+    description: "Our handcrafted gel wax candles are made with premium materials for a luxurious experience.",
+    stock: 10,
+    ratings: [],
+    averageRating: 4.5,
+  },
+  {
+    _id: "2",
+    name: "Natural Soy Wax Candle",
+    price: 330,
+    size: "65g",
+    type: "Soy Wax",
+    fragrance: "Lavender & Chamomile",
+    images: ["/images/soy-candle.png"],
+    description: "Eco-friendly soy wax candles with natural fragrances for a clean, long-lasting burn.",
+    stock: 15,
+    ratings: [],
+    averageRating: 4.8,
+  },
+  {
+    _id: "3",
+    name: "Palm Wax Candle",
+    price: 269,
+    size: "65g",
+    type: "Palm Wax",
+    fragrance: "Citrus & Bergamot",
+    images: ["/images/palm-candle.png"],
+    description: "Palm wax candles with a unique crystalline appearance and excellent scent throw.",
+    stock: 8,
+    ratings: [],
+    averageRating: 4.2,
+  },
+  {
+    _id: "4",
+    name: "Teddy Bear Shaped Candle",
+    price: 450,
+    type: "Shaped Candle",
+    fragrance: "Cinnamon & Spice",
+    images: ["/images/shaped-candle.png"],
+    description: "Adorable teddy bear shaped candles, perfect for gifts and special occasions.",
+    stock: 5,
+    ratings: [],
+    averageRating: 4.9,
+  },
+]
+
 // Product API
 export const productAPI = {
   // Get all products with optional filters
   getProducts: async (params = {}) => {
-    const queryString = new URLSearchParams(params as Record<string, string>).toString()
-    return fetchAPI(`/products?${queryString}`)
+    try {
+      // For development, return mock data
+      if (process.env.NODE_ENV === "development") {
+        return {
+          success: true,
+          count: mockProducts.length,
+          total: mockProducts.length,
+          totalPages: 1,
+          currentPage: 1,
+          products: mockProducts,
+        }
+      }
+
+      const queryString = new URLSearchParams(params as Record<string, string>).toString()
+      return fetchAPI(`/products?${queryString}`)
+    } catch (error) {
+      console.error("Error fetching products:", error)
+      return {
+        success: true,
+        count: 0,
+        total: 0,
+        totalPages: 0,
+        currentPage: 1,
+        products: [],
+      }
+    }
   },
 
   // Get a single product by ID
   getProduct: async (id: string) => {
-    return fetchAPI(`/products/${id}`)
+    try {
+      // For development, return mock data
+      if (process.env.NODE_ENV === "development") {
+        const product = mockProducts.find((p) => p._id === id)
+        if (!product) throw new Error("Product not found")
+
+        return {
+          success: true,
+          product,
+          relatedProducts: mockProducts.filter((p) => p._id !== id).slice(0, 3),
+        }
+      }
+
+      return fetchAPI(`/products/${id}`)
+    } catch (error) {
+      console.error("Error fetching product:", error)
+      throw error
+    }
   },
 
   // Get featured products
   getFeaturedProducts: async (limit = 4) => {
-    return fetchAPI(`/products/featured?limit=${limit}`)
+    try {
+      // For development, return mock data
+      if (process.env.NODE_ENV === "development") {
+        return {
+          success: true,
+          count: mockProducts.length,
+          products: mockProducts.slice(0, limit),
+        }
+      }
+
+      return fetchAPI(`/products/featured?limit=${limit}`)
+    } catch (error) {
+      console.error("Error fetching featured products:", error)
+      return {
+        success: true,
+        count: 0,
+        products: [],
+      }
+    }
   },
 
   // Add a rating to a product
@@ -63,7 +177,25 @@ export const productAPI = {
 export const cartAPI = {
   // Get user cart
   getCart: async () => {
-    return fetchAPI("/cart")
+    try {
+      // For development, return mock data
+      if (process.env.NODE_ENV === "development") {
+        return {
+          success: true,
+          cart: { items: [] },
+          total: 0,
+        }
+      }
+
+      return fetchAPI("/cart")
+    } catch (error) {
+      console.error("Error fetching cart:", error)
+      return {
+        success: true,
+        cart: { items: [] },
+        total: 0,
+      }
+    }
   },
 
   // Add item to cart
@@ -164,4 +296,3 @@ export const authAPI = {
     })
   },
 }
-
