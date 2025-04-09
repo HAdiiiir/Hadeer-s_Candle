@@ -63,16 +63,16 @@ export default function ProductsPage() {
 
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
-      {/* Products header component with category passed as prop */}
+      {/* Products Header with category passed as prop */}
       <ProductsHeader category={category} />
-      
+
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-4">
-        {/* Filters section */}
+        {/* Filters Section */}
         <div className="lg:col-span-1">
           <ProductFilters />
         </div>
 
-        {/* Products grid section */}
+        {/* Products Grid Section */}
         <div className="lg:col-span-3">
           <ProductGrid products={products} isLoading={isLoading} />
         </div>

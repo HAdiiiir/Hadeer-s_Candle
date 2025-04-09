@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -61,10 +60,12 @@ export default function RegisterPage() {
     <div className="container flex items-center justify-center py-12 md:py-24">
       <div className="mx-auto w-full max-w-md space-y-6 rounded-lg border bg-card p-6 shadow-sm">
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">Create an Account</h1>
+          <h1 className="text-3xl font-bold text-primary">Create an Account</h1>
           <p className="text-gray-500">Enter your details to create a new account</p>
         </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name Field */}
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
             <Input
@@ -76,27 +77,33 @@ export default function RegisterPage() {
               required
             />
           </div>
+
+          {/* Email Field */}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
-              placeholder="example@email.com"
+              placeholder="https://www.instagram.com/haders_candle?igsh=MXVyZzlvNnhmMWRidA=="
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
+
+          {/* Phone Field */}
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number (Optional)</Label>
             <Input
               id="phone"
               type="tel"
-              placeholder="+20 123 456 7890"
+              placeholder="+20 1030822692"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
           </div>
+
+          {/* Password Field */}
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
@@ -121,6 +128,8 @@ export default function RegisterPage() {
               </Button>
             </div>
           </div>
+
+          {/* Confirm Password Field */}
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
@@ -132,10 +141,14 @@ export default function RegisterPage() {
               required
             />
           </div>
+
+          {/* Submit Button */}
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Creating account..." : "Register"}
           </Button>
         </form>
+
+        {/* Login Link */}
         <div className="text-center text-sm">
           Already have an account?{" "}
           <Link href="/login" className="text-primary hover:underline">
@@ -146,4 +159,3 @@ export default function RegisterPage() {
     </div>
   )
 }
-

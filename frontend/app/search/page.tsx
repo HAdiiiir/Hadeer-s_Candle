@@ -11,11 +11,17 @@ export default function SearchPage({
 
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
+      {/* Header Section */}
       <SearchHeader query={query} />
+      
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-4">
+        
+        {/* Filters Section */}
         <div className="lg:col-span-1">
           <SearchFilters />
         </div>
+
+        {/* Results Section */}
         <div className="lg:col-span-3">
           <SearchResults query={query} />
         </div>
@@ -23,4 +29,3 @@ export default function SearchPage({
     </div>
   )
 }
-
