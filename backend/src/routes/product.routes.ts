@@ -1,65 +1,108 @@
-import express from "express"
-import { authenticate, authorize } from "../middleware/auth.middleware"
+import express from "express";
+import { authenticate, authorize } from "../middleware/auth.middleware";
 
-// Since we haven't implemented the product controller yet, we'll create a simple placeholder
-const router = express.Router()
+// ======================================
+//             PRODUCT ROUTES
+// ======================================
+const router = express.Router();
 
-// Public routes
+// ------------------------------
+//          PUBLIC ROUTES
+// ------------------------------
+
+// GET ALL PRODUCTS
 router.get("/", (req: express.Request, res: express.Response) => {
   res.status(200).json({
     success: true,
     message: "Product routes are working",
     products: [],
-  })
-})
+  });
+});
 
+// GET FEATURED PRODUCTS
 router.get("/featured", (req: express.Request, res: express.Response) => {
   res.status(200).json({
     success: true,
     message: "Featured products",
     products: [],
-  })
-})
+  });
+});
 
+// GET SINGLE PRODUCT
 router.get("/:id", (req: express.Request, res: express.Response) => {
   res.status(200).json({
     success: true,
     message: `Product with ID ${req.params.id} found`,
-    product: { id: req.params.id, name: "Sample Product", price: 100 },
-  })
-})
+    product: {
+      id: req.params.id,
+      name: "Sample Product",
+      price: 100
+    },
+  });
+});
 
-// Protected routes
-router.post("/", authenticate, authorize("admin"), (req: express.Request, res: express.Response) => {
-  res.status(201).json({
-    success: true,
-    message: "Product created successfully",
-    product: { ...req.body, id: "new-product-id" },
-  })
-})
+// ------------------------------
+//         PROTECTED ROUTES
+// ------------------------------
 
-router.put("/:id", authenticate, authorize("admin"), (req: express.Request, res: express.Response) => {
-  res.status(200).json({
-    success: true,
-    message: `Product with ID ${req.params.id} updated successfully`,
-    product: { ...req.body, id: req.params.id },
-  })
-})
+// CREATE PRODUCT (ADMIN ONLY)
+router.post(
+  "/",
+  authenticate,
+  authorize("admin"),
+  (req: express.Request, res: express.Response) => {
+    res.status(201).json({
+      success: true,
+      message: "Product created successfully",
+      product: {
+        ...req.body,
+        id: "new-product-id"
+      },
+    });
+  }
+);
 
-router.delete("/:id", authenticate, authorize("admin"), (req: express.Request, res: express.Response) => {
-  res.status(200).json({
-    success: true,
-    message: `Product with ID ${req.params.id} deleted successfully`,
-  })
-})
+// UPDATE PRODUCT (ADMIN ONLY)
+router.put(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  (req: express.Request, res: express.Response) => {
+    res.status(200).json({
+      success: true,
+      message: `Product with ID ${req.params.id} updated successfully`,
+      product: {
+        ...req.body,
+        id: req.params.id
+      },
+    });
+  }
+);
 
-router.post("/:id/rating", authenticate, (req: express.Request, res: express.Response) => {
-  res.status(200).json({
-    success: true,
-    message: `Rating added to product with ID ${req.params.id}`,
-    averageRating: 4.5,
-  })
-})
+// DELETE PRODUCT (ADMIN ONLY)
+router.delete(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  (req: express.Request, res: express.Response) => {
+    res.status(200).json({
+      success: true,
+      message: `Product with ID ${req.params.id} deleted successfully`,
+    });
+  }
+);
 
-export default router
+// ADD PRODUCT RATING (AUTHENTICATED USERS)
+router.post(
+  "/:id/rating",
+  authenticate,
+  (req: express.Request, res: express.Response) => {
+    res.status(200).json({
+      success: true,
+      message: `Rating added to product with ID ${req.params.id}`,
+      averageRating: 4.5,
+    });
+  }
+);
 
+export default router;

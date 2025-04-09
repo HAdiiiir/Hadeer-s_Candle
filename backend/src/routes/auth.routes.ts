@@ -1,10 +1,17 @@
-import express from "express"
-import { authenticate } from "../middleware/auth.middleware"
+import express from "express";
+import { authenticate } from "../middleware/auth.middleware";
 
-// Since we haven't implemented the auth controller yet, we'll create a simple placeholder
-const router = express.Router()
+const router = express.Router();
 
-// Public routes
+// =============================================
+// PUBLIC ROUTES (No authentication required)
+// =============================================
+
+/**
+ * @route   POST /api/auth/register
+ * @desc    Register a new user
+ * @access  Public
+ */
 router.post("/register", (req: express.Request, res: express.Response) => {
   res.status(201).json({
     success: true,
@@ -16,9 +23,14 @@ router.post("/register", (req: express.Request, res: express.Response) => {
       email: req.body.email,
       role: "user",
     },
-  })
-})
+  });
+});
 
+/**
+ * @route   POST /api/auth/login
+ * @desc    Authenticate user and get token
+ * @access  Public
+ */
 router.post("/login", (req: express.Request, res: express.Response) => {
   res.status(200).json({
     success: true,
@@ -30,10 +42,18 @@ router.post("/login", (req: express.Request, res: express.Response) => {
       email: req.body.email,
       role: "user",
     },
-  })
-})
+  });
+});
 
-// Protected routes
+// =============================================
+// PROTECTED ROUTES (Require authentication)
+// =============================================
+
+/**
+ * @route   GET /api/auth/me
+ * @desc    Get current user's profile
+ * @access  Private
+ */
 router.get("/me", authenticate, (req: express.Request, res: express.Response) => {
   res.status(200).json({
     success: true,
@@ -43,9 +63,14 @@ router.get("/me", authenticate, (req: express.Request, res: express.Response) =>
       email: "user@example.com",
       role: (req as any).user.role,
     },
-  })
-})
+  });
+});
 
+/**
+ * @route   PUT /api/auth/profile
+ * @desc    Update user profile
+ * @access  Private
+ */
 router.put("/profile", authenticate, (req: express.Request, res: express.Response) => {
   res.status(200).json({
     success: true,
@@ -54,15 +79,19 @@ router.put("/profile", authenticate, (req: express.Request, res: express.Respons
       id: (req as any).user.id,
       ...req.body,
     },
-  })
-})
+  });
+});
 
+/**
+ * @route   PUT /api/auth/password
+ * @desc    Change user password
+ * @access  Private
+ */
 router.put("/password", authenticate, (req: express.Request, res: express.Response) => {
   res.status(200).json({
     success: true,
     message: "Password updated successfully",
-  })
-})
+  });
+});
 
-export default router
-
+export default router;

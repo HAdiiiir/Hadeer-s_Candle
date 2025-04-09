@@ -8,11 +8,15 @@ dotenv.config()
 const PORT = process.env.PORT || 5000
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/hadeer-candle"
 
-// Connect to MongoDB
+console.log("Attempting to connect to MongoDB at:", MONGODB_URI)
+
+// Connect to MongoDB with more detailed options
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, {
+    // Additional options if needed
+  })
   .then(() => {
-    console.log("Connected to MongoDB")
+    console.log("Connected to MongoDB successfully")
 
     // Start the server
     app.listen(PORT, () => {
@@ -20,7 +24,7 @@ mongoose
     })
   })
   .catch((error) => {
-    console.error("MongoDB connection error:", error)
+    console.error("MongoDB connection error details:", error)
     process.exit(1)
   })
 
@@ -30,4 +34,3 @@ process.on("unhandledRejection", (err: Error) => {
   // Close server & exit process
   process.exit(1)
 })
-

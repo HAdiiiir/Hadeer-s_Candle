@@ -1,59 +1,109 @@
-import type { Request, Response, NextFunction } from "express"
-import jwt from "jsonwebtoken"
+import type { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 
+// =============================================
+// TYPE DEFINITIONS
+// =============================================
 interface DecodedToken {
-  id: string
-  role: string
-  iat: number
-  exp: number
+  id: string;
+  role: string;
+  iat: number;
+  exp: number;
 }
 
-// Authenticate user
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    // Get token from header
-    const authHeader = req.headers.authorization
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    role: string;
+  };
+}
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+// =============================================
+// CONSTANTS
+// =============================================
+const UNAUTHORIZED_MESSAGE = "Authentication required. Please log in.";
+const INVALID_TOKEN_MESSAGE = "Invalid token. Please log in again.";
+const FORBIDDEN_MESSAGE = "Not authorized to access this resource";
+
+// =============================================
+// AUTHENTICATION MIDDLEWARE
+// =============================================
+export const authenticate = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // Extract token from Authorization header
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader?.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Authentication required. Please log in.",
-      })
+        message: UNAUTHORIZED_MESSAGE,
+        code: "MISSING_AUTH_TOKEN",
+      });
     }
 
-    const token = authHeader.split(" ")[1]
+    const token = authHeader.split(" ")[1].trim();
 
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key") as DecodedToken
+    // Verify and decode token
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "your-secret-key"
+    ) as DecodedToken;
 
-    // Add user to request object
-    ;(req as any).user = {
+    // Attach user to request object
+    req.user = {
       id: decoded.id,
       role: decoded.role,
-    }
+    };
 
-    next()
+    next();
   } catch (error) {
+    const errorMessage = error instanceof jwt.TokenExpiredError
+      ? "Token expired. Please log in again."
+      : INVALID_TOKEN_MESSAGE;
+
     return res.status(401).json({
       success: false,
-      message: "Invalid token. Please log in again.",
-    })
+      message: errorMessage,
+      code: "INVALID_AUTH_TOKEN",
+    });
   }
-}
+};
 
-// Authorize roles
-export const authorize = (...roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const userRole = (req as any).user.role
-
-    if (!roles.includes(userRole)) {
-      return res.status(403).json({
+// =============================================
+// AUTHORIZATION MIDDLEWARE
+// =============================================
+export const authorize = (...allowedRoles: string[]) => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    // Ensure authentication ran first
+    if (!req.user) {
+      return res.status(401).json({
         success: false,
-        message: "Not authorized to access this resource",
-      })
+        message: UNAUTHORIZED_MESSAGE,
+        code: "USER_NOT_AUTHENTICATED",
+      });
     }
 
-    next()
-  }
-}
+    // Check if user has required role
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: FORBIDDEN_MESSAGE,
+        code: "INSUFFICIENT_PERMISSIONS",
+        requiredRoles: allowedRoles,
+        userRole: req.user.role,
+      });
+    }
 
+    next();
+  };
+};
+
+// =============================================
+// ROLE-SPECIFIC SHORTCUTS
+// =============================================
+export const adminOnly = authorize("admin");
+export const userOnly = authorize("user");
