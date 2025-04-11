@@ -10,31 +10,24 @@ import { productAPI } from "@/lib/api"
 import { useToast } from "@/components/ui/use-toast"
 
 export default function ProductsPage() {
-  // States for products and loading status
-  const [products, setProducts] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  
-  // Fetching search params from URL
+  const [products, setProducts] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const searchParams = useSearchParams()
-  
-  // Toast for displaying error messages
   const { toast } = useToast()
 
-  // Extracting query parameters
   const category = searchParams.get("category")
   const type = searchParams.get("type")
   const minPrice = searchParams.get("minPrice")
   const maxPrice = searchParams.get("maxPrice")
   const size = searchParams.get("size")
   const shape = searchParams.get("shape")
+  const search = searchParams.get("search")
 
-  // Fetching products based on the query params
   useEffect(() => {
     const fetchProducts = async () => {
-      setIsLoading(true)  // Setting loading to true before fetching
-
+      setIsLoading(true)
       try {
-        // Preparing query params dynamically
+        // Build query params
         const params: Record<string, string> = {}
         if (category) params.category = category
         if (type) params.type = type
@@ -42,37 +35,31 @@ export default function ProductsPage() {
         if (maxPrice) params.maxPrice = maxPrice
         if (size) params.size = size
         if (shape) params.shape = shape
+        if (search) params.search = search
 
-        // Calling the product API with the query params
         const response = await productAPI.getProducts(params)
-        setProducts(response.products)  // Setting products in the state
+        setProducts(response.products)
       } catch (error: any) {
-        // Displaying error toast if fetch fails
         toast({
           title: "Error",
           description: error.message || "Failed to fetch products",
           variant: "destructive",
         })
       } finally {
-        setIsLoading(false)  // Setting loading to false after the fetch completes
+        setIsLoading(false)
       }
     }
 
     fetchProducts()
-  }, [category, type, minPrice, maxPrice, size, shape, toast])
+  }, [category, type, minPrice, maxPrice, size, shape, search, toast])
 
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
-      {/* Products Header with category passed as prop */}
-      <ProductsHeader category={category} />
-
+      <ProductsHeader category={category} type={type} />
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-4">
-        {/* Filters Section */}
         <div className="lg:col-span-1">
           <ProductFilters />
         </div>
-
-        {/* Products Grid Section */}
         <div className="lg:col-span-3">
           <ProductGrid products={products} isLoading={isLoading} />
         </div>

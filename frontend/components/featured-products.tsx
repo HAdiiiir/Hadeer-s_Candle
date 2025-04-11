@@ -278,7 +278,7 @@ const featuredProducts = [
     category: "Cup",
     fragrance: "Blue Agave",
     waxType: "Crystal Gel",
-    burnTime: "60-65 hours",
+    burnTime: "50-60 hours",
     description: "Extra-large gel candle in IKEA glass with exotic Blue Agave scent. Can be customized with decorative embeds. Makes a stunning gift.",
     images: ["/candles/cup-320g.jpg"],
   }

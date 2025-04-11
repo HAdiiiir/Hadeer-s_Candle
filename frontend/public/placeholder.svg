@@ -1,0 +1,8 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="800" fill="#F5F0FF"/>
+  <path d="M400 250C400 250 350 300 350 350C350 400 400 450 400 500C400 450 450 400 450 350C450 300 400 250 400 250Z" fill="#8A2BE2" stroke="#8A2BE2" stroke-width="10"/>
+  <circle cx="400" cy="200" r="20" fill="#8A2BE2"/>
+  <rect x="390" y="220" width="20" height="30" fill="#8A2BE2"/>
+  <path d="M350 500H450V550C450 577.614 427.614 600 400 600C372.386 600 350 577.614 350 550V500Z" fill="#8A2BE2"/>
+  <text x="400" y="700" font-family="Arial" font-size="32" text-anchor="middle" fill="#8A2BE2">Hadeer's Candle</text>
+</svg>

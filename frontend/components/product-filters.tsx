@@ -48,7 +48,7 @@ export function ProductFilters() {
               <span>From: <strong>EGP {priceRange[0]}</strong></span>
               <span>To: <strong>EGP {priceRange[1]}</strong></span>
             </div>
-            <Button className="w-full mt-2 bg-purple-600 text-white hover:bg-purple-700">Done</Button>
+            <Button className="w-full mt-2 bg-purple-400 text-white hover:bg-purple-500">Done</Button>
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -66,7 +66,7 @@ export function ProductFilters() {
               <label htmlFor={`type-${type.toLowerCase().replace(" ", "-")}`} className="text-sm text-purple-700">{type}</label>
             </div>
           ))}
-          <Button className="w-full mt-2 bg-purple-600 text-white hover:bg-purple-700">Done</Button>
+          <Button className="w-full mt-2 bg-purple-400 text-white hover:bg-purple-500">Done</Button>
         </CollapsibleContent>
       </Collapsible>
 
@@ -84,7 +84,7 @@ export function ProductFilters() {
             </div>
           ))}
           <div className="col-span-2">
-            <Button className="w-full mt-2 bg-purple-600 text-white hover:bg-purple-700">Done</Button>
+            <Button className="w-full mt-2 bg-purple-400 text-white hover:bg-purple-500">Done</Button>
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -102,13 +102,13 @@ export function ProductFilters() {
               <label htmlFor={`shape-${shape.toLowerCase().replace(" ", "-")}`} className="text-sm text-purple-700">{shape}</label>
             </div>
           ))}
-          <Button className="w-full mt-2 bg-purple-600 text-white hover:bg-purple-700">Done</Button>
+          <Button className="w-full mt-2 bg-purple-400 text-white hover:bg-purple-500">Done</Button>
         </CollapsibleContent>
       </Collapsible>
 
       {/* Submit Button */}
       <div className="pt-4">
-        <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">Submit</Button>
+        <Button className="w-full bg-purple-400 hover:bg-purple-500 text-white">Submit</Button>
       </div>
     </div>
   )
