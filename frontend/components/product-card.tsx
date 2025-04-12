@@ -1,16 +1,15 @@
 "use client"
 
 import type React from "react"
-
 import Link from "next/link"
 import Image from "next/image"
-import { ShoppingCart, Heart, Star } from "lucide-react"
-
+import { ShoppingCart, Heart, Star, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/lib/cart-context"
 import { useAuth } from "@/lib/auth-context"
 import { Badge } from "@/components/ui/badge"
+import { cn } from "@/lib/utils"
 
 interface ProductCardProps {
   product: {
@@ -52,6 +51,7 @@ export function ProductCard({ product }: ProductCardProps) {
       toast({
         title: "Added to cart",
         description: `${product.name} has been added to your cart`,
+        className: "border-purple-200 bg-purple-50 text-purple-800",
       })
     } catch (error: any) {
       toast({
@@ -62,82 +62,116 @@ export function ProductCard({ product }: ProductCardProps) {
     }
   }
 
-  // Use placeholder image if product image is not available
-  const productImage =
-    product.images && product.images.length > 0 ? product.images[0] : `/placeholder.svg?height=400&width=400`
+  const productImage = product.images?.[0] || `/placeholder.svg?height=400&width=400`
 
   return (
     <Link
       href={`/products/${product._id}`}
-      className="product-card group relative overflow-hidden rounded-lg border bg-background shadow-sm transition-all"
+      className="group relative block overflow-hidden rounded-lg border border-purple-100 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-1"
     >
-      <div className="absolute right-2 top-2 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full bg-white/80 backdrop-blur-sm hover:bg-white"
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            toast({
-              title: "Added to favorites",
-              description: `${product.name} has been added to your favorites`,
-            })
-          }}
-        >
-          <Heart className="h-4 w-4 text-purple-600" />
-        </Button>
-      </div>
+      {/* Favorite Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute right-2 top-2 z-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          toast({
+            title: "Added to favorites",
+            description: `${product.name} has been added to your favorites`,
+            className: "border-purple-200 bg-purple-50 text-purple-800",
+          })
+        }}
+      >
+        <Heart className="h-4 w-4 fill-purple-100 text-purple-600 group-hover:fill-purple-200 transition-colors" />
+      </Button>
+
+      {/* Product Image */}
       <div className="aspect-square overflow-hidden">
         <Image
-          src={productImage || "/placeholder.svg"}
+          src={productImage}
           alt={product.name}
           width={400}
           height={400}
-          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          priority={false}
+          loading="lazy"
         />
       </div>
+
+      {/* Product Details */}
       <div className="p-4">
+        {/* Badges */}
         <div className="mb-2 flex flex-wrap gap-1">
           {product.fragrance && (
-            <Badge variant="outline" className="bg-purple-100 text-purple-700 text-xs border-purple-200">
+            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
               {product.fragrance}
             </Badge>
           )}
-          <Badge variant="outline" className="bg-muted text-xs">
+          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
             {product.type}
           </Badge>
           {product.size && (
-            <Badge variant="outline" className="bg-muted text-xs">
+            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
               {product.size}
             </Badge>
           )}
         </div>
-        <h3 className="font-semibold text-gray-800">{product.name}</h3>
-        <p className="text-sm text-gray-500">{product.burnTime && `Burn time: ${product.burnTime}`}</p>
-        <div className="mt-2 flex items-center justify-between">
-          <p className="font-bold text-purple-600">EGP {product.price}</p>
-          <div className="flex items-center">
-            {product.ratings && product.ratings.length > 0 && (
-              <div className="flex items-center mr-2 text-xs text-gray-500">
-                <Star
-                  className={`h-3 w-3 mr-1 ${product.averageRating && product.averageRating > 0 ? "fill-amber-400 text-amber-400" : "text-gray-300"}`}
-                />
-                <span>
-                  {product.ratings.length} {product.ratings.length === 1 ? "review" : "reviews"}
-                </span>
+
+        {/* Product Name */}
+        <h3 className="font-semibold text-gray-800 group-hover:text-purple-700 transition-colors">
+          {product.name}
+        </h3>
+
+        {/* Additional Info */}
+        {product.burnTime && (
+          <p className="text-sm text-gray-500 mb-2">
+            <span className="font-medium">Burn Time:</span> {product.burnTime}
+          </p>
+        )}
+
+        {/* Price and Actions */}
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-bold text-purple-600">EGP {product.price.toFixed(2)}</p>
+            {product.ratings?.length ? (
+              <div className="flex items-center mt-1">
+                <div className="flex items-center mr-2">
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-400 mr-1" />
+                  <span className="text-xs text-gray-500">
+                    {product.averageRating?.toFixed(1)} ({product.ratings.length})
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center mt-1">
+                <Star className="h-3 w-3 text-gray-300 mr-1" />
+                <span className="text-xs text-gray-400">No reviews</span>
               </div>
             )}
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={handleAddToCart}
-              className="rounded-full hover:bg-purple-600 hover:text-white"
-            >
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
           </div>
+
+          <Button
+            size="sm"
+            onClick={handleAddToCart}
+            className="rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-sm hover:shadow-md transition-all"
+          >
+            <ShoppingCart className="h-4 w-4" />
+          </Button>
         </div>
+
+        {/* Quick View Button (appears on hover) */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="absolute bottom-20 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 border-purple-200 text-purple-700 hover:bg-purple-50"
+          asChild
+        >
+          <Link href={`/products/${product._id}`} className="flex items-center">
+            Quick View <ChevronRight className="h-4 w-4 ml-1" />
+          </Link>
+        </Button>
       </div>
     </Link>
   )

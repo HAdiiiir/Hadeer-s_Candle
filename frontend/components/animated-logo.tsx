@@ -2,8 +2,15 @@
 
 import { useEffect, useRef } from "react"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 
-export function AnimatedLogo() {
+interface AnimatedLogoProps {
+  className?: string
+  withLink?: boolean
+  onClick?: () => void
+}
+
+export function AnimatedLogo({ className, withLink = true, onClick }: AnimatedLogoProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -21,6 +28,7 @@ export function AnimatedLogo() {
     let angle = 0
     let hue = 270 // Start with purple hue
     let frame = 0
+    let animationFrameId: number
 
     // Draw candle flame
     const drawFlame = () => {
@@ -75,20 +83,35 @@ export function AnimatedLogo() {
         hue = 270 + Math.sin(angle / 5) * 20 // Vary between purple shades
       }
 
-      requestAnimationFrame(drawFlame)
+      animationFrameId = requestAnimationFrame(drawFlame)
     }
 
     drawFlame()
 
     return () => {
-      // Cleanup if needed
+      cancelAnimationFrame(animationFrameId)
     }
   }, [])
 
-  return (
-    <Link href="/" className="block relative">
-      <canvas ref={canvasRef} width="80" height="80" className="cursor-pointer" title="Hadeer's Candle" />
+  const canvasElement = (
+    <div 
+      className={cn("block relative", className)}
+      onClick={onClick}
+    >
+      <canvas 
+        ref={canvasRef} 
+        width="80" 
+        height="80" 
+        className="cursor-pointer" 
+        title="Hadeer's Candle" 
+      />
       <span className="sr-only">Hadeer's Candle Logo</span>
-    </Link>
+    </div>
   )
+
+  if (withLink) {
+    return canvasElement // Let the parent component handle the Link wrapper
+  }
+
+  return canvasElement
 }

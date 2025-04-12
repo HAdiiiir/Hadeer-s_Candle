@@ -16,7 +16,6 @@ import { useAuth } from "@/lib/auth-context"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-// Enhanced fragrance descriptions with more details
 const fragranceDescriptions = {
   "Vanilla & Amber": {
     description: "A warm, sweet blend of vanilla bean and rich amber, creating a cozy and inviting atmosphere.",
@@ -133,15 +132,11 @@ export default function ProductPage() {
   const { addToCart } = useCart()
   const { user } = useAuth()
 
-  // Enhanced product data with fragrance details
   const enhanceProductData = (product: any) => {
     if (!product) return null
 
-    // If product already has a fragrance, use it, otherwise assign a random one
     const fragrance = product.fragrance || Object.keys(fragranceDescriptions)[0]
     const fragranceDetails = fragranceDescriptions[fragrance as keyof typeof fragranceDescriptions]
-
-    // If no matching fragrance details, use the first one
     const fallbackFragrance = Object.keys(fragranceDescriptions)[0]
     const fallbackDetails = fragranceDescriptions[fallbackFragrance as keyof typeof fragranceDescriptions]
 
@@ -151,18 +146,11 @@ export default function ProductPage() {
       fragranceDescription: fragranceDetails?.description || fallbackDetails.description,
       fragranceNotes: fragranceDetails?.notes || fallbackDetails.notes,
       fragranceBestFor: fragranceDetails?.bestFor || fallbackDetails.bestFor,
-      burnTime:
-        product.burnTime ||
-        `${Math.round((product.weight || 65) / 2.5)}-${Math.round((product.weight || 65) / 2)} hours`,
-      waxType:
-        product.waxType ||
-        (product.type.includes("Gel")
-          ? "Premium Crystal Gel Wax"
-          : product.type.includes("Soy")
-            ? "100% Natural Soy Wax"
-            : product.type.includes("Palm")
-              ? "Sustainable Palm Wax"
-              : "Specialty Wax Blend"),
+      burnTime: product.burnTime || `${Math.round((product.weight || 65) / 2.5)}-${Math.round((product.weight || 65) / 2)} hours`,
+      waxType: product.waxType ||
+        (product.type.includes("Gel") ? "Premium Crystal Gel Wax" :
+         product.type.includes("Soy") ? "100% Natural Soy Wax" :
+         product.type.includes("Palm") ? "Sustainable Palm Wax" : "Specialty Wax Blend"),
     }
   }
 
@@ -174,9 +162,7 @@ export default function ProductPage() {
       try {
         const response = await productAPI.getProduct(productId)
         setProduct(enhanceProductData(response.product))
-
-        const enhancedRelatedProducts = response.relatedProducts.map((product: any) => enhanceProductData(product))
-        setRelatedProducts(enhancedRelatedProducts)
+        setRelatedProducts(response.relatedProducts.map((product: any) => enhanceProductData(product)))
       } catch (error: any) {
         toast({
           title: "Error",
@@ -263,20 +249,15 @@ export default function ProductPage() {
     )
   }
 
-  // Use placeholder image if product image is not available
-  const productImage =
-    product.images && product.images.length > 0
-      ? product.images[selectedImage]
-      : `/placeholder.svg?height=800&width=800`
+  const productImage = product.images?.[selectedImage] || `/placeholder.svg?height=800&width=800`
 
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
       <div className="grid gap-12 md:grid-cols-2">
-        {/* Product Gallery */}
         <div className="space-y-4">
           <div className="overflow-hidden rounded-xl border bg-background shadow-sm">
             <Image
-              src={productImage || "/placeholder.svg"}
+              src={productImage}
               alt={product.name}
               width={800}
               height={800}
@@ -289,9 +270,7 @@ export default function ProductPage() {
               <button
                 key={index}
                 className={`aspect-square overflow-hidden rounded-lg border-2 transition-all ${
-                  selectedImage === index
-                    ? "border-purple-600 ring-2 ring-purple-300"
-                    : "border-transparent hover:border-purple-200"
+                  selectedImage === index ? "border-purple-600 ring-2 ring-purple-300" : "border-transparent hover:border-purple-200"
                 }`}
                 onClick={() => setSelectedImage(index)}
               >
@@ -307,9 +286,7 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* Product Details */}
         <div className="space-y-6">
-          {/* Header with badges */}
           <div>
             <div className="flex flex-wrap gap-2 mb-3">
               <Badge variant="secondary" className="text-purple-700 bg-purple-100">
@@ -327,29 +304,25 @@ export default function ProductPage() {
 
             <div className="mt-3 flex items-center">
               <div className="flex">
-                {Array(5)
-                  .fill(0)
-                  .map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-5 w-5 ${
-                        i < Math.round(product.averageRating || 0) ? "fill-amber-400 text-amber-400" : "text-gray-300"
-                      }`}
-                    />
-                  ))}
+                {Array(5).fill(0).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-5 w-5 ${
+                      i < Math.round(product.averageRating || 0) ? "fill-amber-400 text-amber-400" : "text-gray-300"
+                    }`}
+                  />
+                ))}
               </div>
               <span className="ml-2 text-sm text-gray-500">({product.ratings?.length || 0} reviews)</span>
               {product.stock > 0 && <span className="ml-4 text-sm font-medium text-green-600">In Stock</span>}
             </div>
           </div>
 
-          {/* Price Section */}
           <div className="bg-purple-50 p-4 rounded-lg">
             <p className="text-3xl font-bold text-gray-900">EGP {product.price}</p>
             <p className="text-sm text-gray-500">Including VAT & shipping</p>
           </div>
 
-          {/* Fragrance Notes */}
           {product.fragrance && (
             <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
               <div className="flex items-center mb-2">
@@ -388,7 +361,6 @@ export default function ProductPage() {
             </div>
           )}
 
-          {/* Product Specifications */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-purple-50 p-3 rounded-lg">
               <p className="text-xs font-medium text-gray-500">Size</p>
@@ -408,7 +380,6 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Quantity Selector */}
           <div className="space-y-3">
             <p className="text-sm font-medium text-gray-900">Quantity</p>
             <div className="flex items-center space-x-3">
@@ -435,12 +406,11 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0">
             <Button
               onClick={handleAddToCart}
               disabled={product.stock <= 0}
-              className="flex-1 h-12 rounded-full bg-purple-600 hover:bg-purple-700 shadow-md btn-glow"
+              className="flex-1 h-12 rounded-full bg-purple-600 hover:bg-purple-700 shadow-md"
             >
               <ShoppingCart className="mr-2 h-5 w-5" />
               Add to Cart
@@ -461,7 +431,6 @@ export default function ProductPage() {
             </Button>
           </div>
 
-          {/* Product Tabs */}
           <Tabs defaultValue="description" className="mt-6">
             <TabsList className="grid w-full grid-cols-3 bg-purple-50 rounded-lg p-1 h-auto">
               <TabsTrigger
@@ -556,7 +525,7 @@ export default function ProductPage() {
             </TabsContent>
 
             <TabsContent value="reviews" className="pt-4">
-              {product.ratings && product.ratings.length > 0 ? (
+              {product.ratings?.length ? (
                 <div className="space-y-6">
                   {product.ratings.map((rating: any, index: number) => (
                     <div key={index} className="border-b border-purple-100 pb-6 last:border-0 last:pb-0">
@@ -570,16 +539,14 @@ export default function ProductPage() {
                           <div className="ml-3">
                             <p className="text-sm font-medium text-gray-900">{rating.userId?.name || "Anonymous"}</p>
                             <div className="flex items-center mt-0.5">
-                              {Array(5)
-                                .fill(0)
-                                .map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`h-4 w-4 ${
-                                      i < rating.rating ? "fill-amber-400 text-amber-400" : "text-gray-300"
-                                    }`}
-                                  />
-                                ))}
+                              {Array(5).fill(0).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-4 w-4 ${
+                                    i < rating.rating ? "fill-amber-400 text-amber-400" : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
                             </div>
                           </div>
                         </div>
@@ -610,7 +577,6 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* Related Products */}
       <div className="mt-16">
         <h3 className="text-xl font-bold text-gray-900 mb-6">You May Also Like</h3>
         <RelatedProducts products={relatedProducts} />

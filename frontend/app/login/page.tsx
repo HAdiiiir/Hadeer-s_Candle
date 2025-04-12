@@ -45,61 +45,65 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="container flex items-center justify-center py-12 md:py-24">
-      <div className="mx-auto w-full max-w-md space-y-6 rounded-lg border bg-card p-6 shadow-sm">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">Login</h1>
-          <p className="text-gray-500">Enter your email and password to login to your account</p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="example@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-purple-100 flex items-center justify-center py-12 md:py-24">
+      <div className="container max-w-md">
+        <div className="mx-auto w-full space-y-6 rounded-lg border bg-white p-8 shadow-sm">
+          <div className="space-y-2 text-center">
+            <h1 className="text-3xl font-bold text-purple-600">Login</h1>
+            <p className="text-gray-500">Enter your email and password to login to your account</p>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                Forgot password?
-              </Link>
-            </div>
-            <div className="relative">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                id="email"
+                type="email"
+                placeholder="example@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
+                className="border-purple-200 focus:border-purple-400 focus:ring-purple-400"
               />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-0 top-0"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
-              </Button>
             </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link href="/forgot-password" className="text-sm text-purple-600 hover:text-purple-800 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="border-purple-200 focus:border-purple-400 focus:ring-purple-400"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 text-purple-500 hover:text-purple-700"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                </Button>
+              </div>
+            </div>
+            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
+            </Button>
+          </form>
+          <div className="text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="text-purple-600 hover:text-purple-800 hover:underline">
+              Register
+            </Link>
           </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Login"}
-          </Button>
-        </form>
-        <div className="text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-primary hover:underline">
-            Register
-          </Link>
         </div>
       </div>
     </div>
