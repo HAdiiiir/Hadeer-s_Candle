@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 import slugify from "slugify";
-import { ICategory } from "./category.model"; // Assuming you have a Category model
-import { IUser } from "./user.model"; // Assuming you have a User model
+import { ICategory } from "./category.model";
+import { IUser } from "./user.model";
 
 // =============================================
 // ENHANCED INTERFACE DEFINITIONS
@@ -25,6 +25,33 @@ export interface IProductVariant {
   images?: string[];
 }
 
+// Candle Categories and Types
+const CANDLE_CATEGORIES = [
+  'sea', 'rose', 'vanilla', 'space', 'romantic', 'decorative', 'seasonal', 'gel-wax', 'palm-wax', 'soy-wax'
+] as const;
+
+const CANDLE_TYPES = [
+  // Sea-themed
+  'iceberg', 'sea-shell', 'ocean-wave', 'pearl', 'coral',
+  // Flower-themed
+  'damask-rose', 'sunflower', 'lotus', 'lavender',
+  // Special shapes
+  'cable', 'lantern', 'crescent-moon', 'fish-tail', 'skull', 'geode', 
+  'crystal', 'moon', 'star', 'bride', 'teddy-bear', 'ball',
+  // Decorative
+  'orb', 'bubbles-small', 'bubbles-large', 'pyramid',
+  // Seasonal
+  'pumpkin', 'snowflake', 'christmas-tree'
+] as const;
+
+const CANDLE_MATERIALS = [
+  'soy-wax', 'beeswax', 'paraffin', 'palm-wax', 'gel-wax', 'coconut-wax'
+] as const;
+
+const CANDLE_FRAGRANCES = [
+  'rose', 'vanilla', 'lavender', 'ocean-breeze', 'sandalwood', 'jasmine', 'unscented'
+] as const;
+
 export interface IProduct extends Document {
   name: string;
   slug: string;
@@ -33,29 +60,28 @@ export interface IProduct extends Document {
   basePrice: number;
   discountPrice?: number;
   variants: IProductVariant[];
-  type: string;
   category: Types.ObjectId | ICategory;
+  candleType: string;
   images: string[];
   mainImage: string;
   stock: number;
-  isShapedCandle: boolean;
-  shape?: string;
-  featured: boolean;
-  bestSeller: boolean;
-  newArrival: boolean;
-  ratings: IRating[];
-  averageRating: number;
-  ratingCount: number;
   materials: string[];
   fragrance?: string;
   burnTime?: string;
   dimensions?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  weight: number;
+  ratings: IRating[];
+  averageRating: number;
+  ratingCount: number;
   salesCount: number;
   viewCount: number;
+  seoTitle?: string;
+  seoDescription?: string;
+  isFeatured: boolean;
+  isBestSeller: boolean;
+  isNewArrival: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // =============================================
@@ -145,152 +171,159 @@ const productSchema = new Schema<IProduct>(
       required: [true, "Product name is required"],
       trim: true,
       maxlength: [100, "Product name cannot exceed 100 characters"],
+      index: true
     },
     slug: {
       type: String,
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^[a-z0-9-]+$/, "Slug can only contain letters, numbers and hyphens"],
+      match: [/^[a-z0-9-]+$/, "Slug can only contain letters, numbers and hyphens"]
     },
     description: {
       type: String,
       required: [true, "Product description is required"],
       trim: true,
       minlength: [50, "Description should be at least 50 characters"],
-      maxlength: [2000, "Description cannot exceed 2000 characters"],
+      maxlength: [2000, "Description cannot exceed 2000 characters"]
     },
     shortDescription: {
       type: String,
       trim: true,
-      maxlength: [150, "Short description cannot exceed 150 characters"],
+      maxlength: [150, "Short description cannot exceed 150 characters"]
     },
     basePrice: {
       type: Number,
       required: [true, "Product base price is required"],
       min: [0, "Price cannot be negative"],
+      index: true
     },
     discountPrice: {
       type: Number,
       min: [0, "Discount price cannot be negative"],
       validate: {
         validator: function(this: IProduct, value: number) {
-          return value < this.basePrice;
+          return !value || value < this.basePrice;
         },
         message: "Discount price must be less than base price",
-      },
+      }
     },
     variants: {
       type: [ProductVariantSchema],
       validate: {
         validator: (variants: IProductVariant[]) => variants.length > 0,
         message: "At least one product variant is required",
-      },
-    },
-    type: {
-      type: String,
-      required: [true, "Product type is required"],
-      enum: ["Gel Wax", "Palm Wax", "Soy Wax", "Shaped Candle"],
+      }
     },
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
       required: [true, "Product category is required"],
-      index: true,
+      index: true
+    },
+    candleType: {
+      type: String,
+      enum: CANDLE_TYPES,
+      required: [true, "Candle type is required"],
+      index: true
     },
     images: {
       type: [String],
-      default: [],
+      required: [true, "At least one product image is required"],
       validate: {
         validator: (images: string[]) => images.length <= 10,
-        message: "Cannot have more than 10 product images",
-      },
+        message: "Cannot upload more than 10 product images",
+      }
     },
     mainImage: {
       type: String,
-      required: [true, "Main image is required"],
+      required: [true, "Main product image is required"]
+    },
+    materials: {
+      type: [String],
+      required: [true, "Materials list is required"],
+      enum: CANDLE_MATERIALS
+    },
+    fragrance: {
+      type: String,
+      trim: true,
+      enum: CANDLE_FRAGRANCES
+    },
+    burnTime: {
+      type: String,
+      trim: true,
+      match: [/^\d+\s?-\s?\d+\s?hours$/, 'Burn time format should be like "40-50 hours"']
+    },
+    dimensions: {
+      type: String,
+      trim: true,
+      match: [/^\d+(\.\d+)?\s?x\s?\d+(\.\d+)?\s?x\s?\d+(\.\d+)?\s?(cm|in)$/, 
+             'Dimensions format should be like "10x10x15 cm"']
+    },
+    weight: {
+      type: Number,
+      required: [true, "Product weight is required"],
+      min: [0, "Weight cannot be negative"]
     },
     stock: {
       type: Number,
       required: [true, "Product stock is required"],
       min: [0, "Stock cannot be negative"],
-      default: 0,
-    },
-    isShapedCandle: {
-      type: Boolean,
-      default: false,
-    },
-    shape: {
-      type: String,
-      enum: ["Bride", "Teddy Bear", "Ball", "Cable", "Crescent", "Lantern", "Skull", null],
-      default: null,
-    },
-    featured: {
-      type: Boolean,
-      default: false,
-    },
-    bestSeller: {
-      type: Boolean,
-      default: false,
-    },
-    newArrival: {
-      type: Boolean,
-      default: function(this: IProduct) {
-        return Date.now() - this.createdAt.getTime() < 30 * 24 * 60 * 60 * 1000; // New for 30 days
-      },
+      default: 0
     },
     ratings: {
       type: [RatingSchema],
-      default: [],
+      default: []
     },
     averageRating: {
       type: Number,
       default: 0,
       min: [0, "Rating cannot be negative"],
       max: [5, "Rating cannot exceed 5"],
-      set: (value: number) => parseFloat(value.toFixed(2)),
+      set: (value: number) => parseFloat(value.toFixed(1))
     },
     ratingCount: {
       type: Number,
       default: 0,
-      min: 0,
-    },
-    materials: {
-      type: [String],
-      required: [true, "Materials list is required"],
-    },
-    fragrance: {
-      type: String,
-      trim: true,
-    },
-    burnTime: {
-      type: String,
-      trim: true,
-    },
-    dimensions: {
-      type: String,
-      trim: true,
-    },
-    seoTitle: {
-      type: String,
-      trim: true,
-      maxlength: [70, "SEO title cannot exceed 70 characters"],
-    },
-    seoDescription: {
-      type: String,
-      trim: true,
-      maxlength: [160, "SEO description cannot exceed 160 characters"],
+      min: 0
     },
     salesCount: {
       type: Number,
       default: 0,
-      min: 0,
+      min: 0
     },
     viewCount: {
       type: Number,
       default: 0,
-      min: 0,
+      min: 0
     },
+    seoTitle: {
+      type: String,
+      trim: true,
+      maxlength: [70, "SEO title cannot exceed 70 characters"]
+    },
+    seoDescription: {
+      type: String,
+      trim: true,
+      maxlength: [160, "SEO description cannot exceed 160 characters"]
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+      index: true
+    },
+    isBestSeller: {
+      type: Boolean,
+      default: false,
+      index: true
+    },
+    isNewArrival: {
+      type: Boolean,
+      default: function(this: IProduct) {
+        return Date.now() - new Date(this.createdAt).getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
+      },
+      index: true
+    }
   },
   {
     timestamps: {
@@ -329,7 +362,7 @@ productSchema.pre<IProduct>("save", function(next) {
   if (this.isModified("ratings")) {
     if (this.ratings.length > 0) {
       const sum = this.ratings.reduce((total, { rating }) => total + rating, 0);
-      this.averageRating = parseFloat((sum / this.ratings.length).toFixed(2));
+      this.averageRating = parseFloat((sum / this.ratings.length).toFixed(1));
       this.ratingCount = this.ratings.length;
     } else {
       this.averageRating = 0;
@@ -370,14 +403,14 @@ productSchema.virtual("currentPrice").get(function(this: IProduct) {
 // =============================================
 // INDEXES FOR PERFORMANCE OPTIMIZATION
 // =============================================
-productSchema.index({ name: "text", description: "text", "shortDescription": "text" });
+productSchema.index({ name: "text", description: "text", shortDescription: "text" });
 productSchema.index({ slug: 1 }, { unique: true });
-productSchema.index({ category: 1 });
-productSchema.index({ price: 1 });
+productSchema.index({ category: 1, candleType: 1 });
+productSchema.index({ basePrice: 1, discountPrice: 1 });
 productSchema.index({ averageRating: -1 });
-productSchema.index({ featured: 1, createdAt: -1 });
-productSchema.index({ bestSeller: 1, salesCount: -1 });
-productSchema.index({ newArrival: 1, createdAt: -1 });
+productSchema.index({ isFeatured: 1, createdAt: -1 });
+productSchema.index({ isBestSeller: 1, salesCount: -1 });
+productSchema.index({ isNewArrival: 1, createdAt: -1 });
 productSchema.index({ "variants.sku": 1 }, { unique: true, sparse: true });
 
 // =============================================
@@ -390,12 +423,12 @@ productSchema.methods.addRating = function(
   rating: number,
   review?: string,
   images?: string[]
-) {
-  // Check if user already rated
-  const existingRatingIndex = this.ratings.findIndex((r) => r.userId.equals(userId));
+): Promise<IProduct> {
+  const existingRatingIndex = this.ratings.findIndex((r: IRating) => 
+    (r.userId as Types.ObjectId).equals(userId)
+  );
   
   if (existingRatingIndex >= 0) {
-    // Update existing rating
     this.ratings[existingRatingIndex] = {
       userId,
       rating,
@@ -406,7 +439,6 @@ productSchema.methods.addRating = function(
       images: images || this.ratings[existingRatingIndex].images,
     };
   } else {
-    // Add new rating
     this.ratings.push({
       userId,
       rating,
@@ -422,8 +454,10 @@ productSchema.methods.addRating = function(
 };
 
 // Mark rating as verified purchase
-productSchema.methods.markRatingVerified = function(userId: Types.ObjectId) {
-  const rating = this.ratings.find((r) => r.userId.equals(userId));
+productSchema.methods.markRatingVerified = function(userId: Types.ObjectId): Promise<IProduct> {
+  const rating = this.ratings.find((r: IRating) => 
+    (r.userId as Types.ObjectId).equals(userId)
+  );
   if (rating) {
     rating.verifiedPurchase = true;
     return this.save();
@@ -432,14 +466,19 @@ productSchema.methods.markRatingVerified = function(userId: Types.ObjectId) {
 };
 
 // Increment view count
-productSchema.methods.incrementViewCount = function() {
+productSchema.methods.incrementViewCount = function(): Promise<IProduct> {
   this.viewCount += 1;
   return this.save();
 };
 
 // Update stock after purchase
-productSchema.methods.updateStock = function(variantId: string, quantity: number) {
-  const variant = this.variants.find((v) => v._id.equals(variantId));
+productSchema.methods.updateStock = function(
+  variantId: Types.ObjectId, 
+  quantity: number
+): Promise<IProduct> {
+  const variant = this.variants.find((v: IProductVariant & { _id: Types.ObjectId }) => 
+    v._id.equals(variantId)
+  );
   if (!variant) throw new Error("Variant not found");
   
   if (variant.stock < quantity) {
@@ -455,37 +494,59 @@ productSchema.methods.updateStock = function(variantId: string, quantity: number
 // STATIC METHODS
 // =============================================
 
+interface IProductModel extends Model<IProduct> {
+  getFeaturedProducts(limit?: number): Promise<IProduct[]>;
+  getBestSellers(limit?: number): Promise<IProduct[]>;
+  getNewArrivals(limit?: number): Promise<IProduct[]>;
+  searchProducts(query: string, page?: number, limit?: number): Promise<IProduct[]>;
+  getProductsByCategory(
+    categoryId: Types.ObjectId,
+    filters?: any,
+    page?: number,
+    limit?: number
+  ): Promise<IProduct[]>;
+  getSortOption(sort?: string): Record<string, 1 | -1>;
+}
+
 // Get featured products
-productSchema.statics.getFeaturedProducts = function(limit = 8) {
-  return this.find({ featured: true })
+productSchema.statics.getFeaturedProducts = function(limit = 8): Promise<IProduct[]> {
+  return this.find({ isFeatured: true })
     .sort({ createdAt: -1 })
     .limit(limit)
-    .select("name slug basePrice discountPrice mainImage averageRating ratingCount");
+    .select("name slug basePrice discountPrice mainImage averageRating ratingCount candleType")
+    .exec();
 };
 
 // Get best sellers
-productSchema.statics.getBestSellers = function(limit = 8) {
-  return this.find({ bestSeller: true })
+productSchema.statics.getBestSellers = function(limit = 8): Promise<IProduct[]> {
+  return this.find({ isBestSeller: true })
     .sort({ salesCount: -1 })
     .limit(limit)
-    .select("name slug basePrice discountPrice mainImage averageRating ratingCount");
+    .select("name slug basePrice discountPrice mainImage averageRating ratingCount candleType")
+    .exec();
 };
 
 // Get new arrivals
-productSchema.statics.getNewArrivals = function(limit = 8) {
-  return this.find({ newArrival: true })
+productSchema.statics.getNewArrivals = function(limit = 8): Promise<IProduct[]> {
+  return this.find({ isNewArrival: true })
     .sort({ createdAt: -1 })
     .limit(limit)
-    .select("name slug basePrice discountPrice mainImage averageRating ratingCount");
+    .select("name slug basePrice discountPrice mainImage averageRating ratingCount candleType")
+    .exec();
 };
 
 // Search products with pagination
-productSchema.statics.searchProducts = function(query: string, page = 1, limit = 12) {
+productSchema.statics.searchProducts = function(
+  query: string, 
+  page = 1, 
+  limit = 12
+): Promise<IProduct[]> {
   return this.find({ $text: { $search: query } })
     .sort({ score: { $meta: "textScore" } })
     .skip((page - 1) * limit)
     .limit(limit)
-    .select("name slug basePrice discountPrice mainImage averageRating ratingCount");
+    .select("name slug basePrice discountPrice mainImage averageRating ratingCount candleType")
+    .exec();
 };
 
 // Get products by category with filters
@@ -494,24 +555,25 @@ productSchema.statics.getProductsByCategory = function(
   filters: any = {},
   page = 1,
   limit = 12
-) {
+): Promise<IProduct[]> {
   const query: any = { category: categoryId };
   
-  // Apply filters
-  if (filters.type) query.type = filters.type;
+  if (filters.candleType) query.candleType = filters.candleType;
   if (filters.minPrice) query.basePrice = { $gte: filters.minPrice };
   if (filters.maxPrice) query.basePrice = { ...query.basePrice, $lte: filters.maxPrice };
   if (filters.materials) query.materials = { $in: filters.materials };
+  if (filters.fragrance) query.fragrance = filters.fragrance;
   
   return this.find(query)
     .sort(this.getSortOption(filters.sort))
     .skip((page - 1) * limit)
     .limit(limit)
-    .select("name slug basePrice discountPrice mainImage averageRating ratingCount");
+    .select("name slug basePrice discountPrice mainImage averageRating ratingCount candleType")
+    .exec();
 };
 
 // Helper for sort options
-productSchema.statics.getSortOption = function(sort?: string) {
+productSchema.statics.getSortOption = function(sort?: string): Record<string, 1 | -1> {
   switch (sort) {
     case "price-asc": return { basePrice: 1 };
     case "price-desc": return { basePrice: -1 };
@@ -525,20 +587,6 @@ productSchema.statics.getSortOption = function(sort?: string) {
 // =============================================
 // MODEL EXPORT WITH STRONG TYPING
 // =============================================
-interface IProductModel extends Model<IProduct> {
-  getFeaturedProducts(limit?: number): Promise<IProduct[]>;
-  getBestSellers(limit?: number): Promise<IProduct[]>;
-  getNewArrivals(limit?: number): Promise<IProduct[]>;
-  searchProducts(query: string, page?: number, limit?: number): Promise<IProduct[]>;
-  getProductsByCategory(
-    categoryId: Types.ObjectId,
-    filters?: any,
-    page?: number,
-    limit?: number
-  ): Promise<IProduct[]>;
-  getSortOption(sort?: string): any;
-}
-
 export const Product: IProductModel = mongoose.model<IProduct, IProductModel>(
   "Product",
   productSchema
