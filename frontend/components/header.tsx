@@ -16,16 +16,46 @@ import {
 import { useMobile } from "@/hooks/use-mobile"
 import { useAuth } from "@/lib/auth-context"
 import { useCart } from "@/lib/cart-context"
-import { AnimatedLogo } from "@/components/animated-logo"
+import { useFavorites } from "@/lib/favorites-context"
 import { cn } from "@/lib/utils"
+
+// New Animated Candle Logo Component
+function AnimatedCandleLogo({ className }: { className?: string }) {
+  return (
+    <div className={cn("relative h-8 w-8", className)}>
+      {/* Candle Flame */}
+      <div className="absolute top-0 left-1/2 transform -translate-x-1/2">
+        <div className="relative h-4 w-3">
+          {/* Flame core */}
+          <div className="absolute inset-0 bg-yellow-300 rounded-full blur-[1px] animate-pulse" />
+          {/* Flame outer */}
+          <div className="absolute inset-0 bg-yellow-200 rounded-full opacity-70 animate-ping" style={{ animationDuration: '2s' }} />
+        </div>
+      </div>
+      
+      {/* Candle Wax */}
+      <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-6 h-5 bg-gradient-to-b from-purple-500 to-purple-700 rounded-sm">
+        {/* Wax drips */}
+        <div className="absolute -left-0.5 top-1 w-1 h-1 bg-purple-400 rounded-full" />
+        <div className="absolute -right-0.5 top-2 w-1 h-1 bg-purple-400 rounded-full" />
+        <div className="absolute left-0.5 top-3 w-1 h-1 bg-purple-300 rounded-full" />
+      </div>
+      
+      {/* Candle Base */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-7 h-2 bg-purple-800 rounded-b-full" />
+    </div>
+  )
+}
 
 export function Header() {
   const isMobile = useMobile()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { user, logout } = useAuth()
   const { items } = useCart()
+  const { favorites } = useFavorites()
 
   const cartItemCount = items.reduce((total, item) => total + item.quantity, 0)
+  const favoriteItemCount = favorites.length
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-purple-50/90 backdrop-blur-md shadow-sm">
@@ -42,7 +72,7 @@ export function Header() {
             <SheetContent side="left" className="w-[300px] sm:w-[400px] bg-purple-50/95">
               <div className="flex flex-col items-center mb-8 mt-4">
                 <Link href="/" className="flex items-center space-x-2 group">
-                  <AnimatedLogo className="h-8 w-8" />
+                  <AnimatedCandleLogo className="h-8 w-8" />
                   <span className="brand-logo text-2xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors">
                     Hadeer's Candle
                   </span>
@@ -78,19 +108,33 @@ export function Header() {
                   Shaped Candles
                 </Link>
                 {user && (
-                  <Link 
-                    href="/orders" 
-                    className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                  >
-                    <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
-                    My Orders
-                  </Link>
+                  <>
+                    <Link 
+                      href="/orders" 
+                      className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
+                    >
+                      <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
+                      My Orders
+                    </Link>
+                    <Link 
+                      href="/favorites" 
+                      className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
+                    >
+                      <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
+                      My Favorites
+                      {favoriteItemCount > 0 && (
+                        <span className="ml-2 text-xs bg-purple-600 text-white rounded-full h-5 w-5 flex items-center justify-center">
+                          {favoriteItemCount}
+                        </span>
+                      )}
+                    </Link>
+                  </>
                 )}
                 {!user ? (
                   <Link 
                     href="/login" 
                     className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                  >
+                    >
                     <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                     Login
                   </Link>
@@ -112,7 +156,7 @@ export function Header() {
 
         {/* Brand Logo */}
         <Link href="/" className="mr-6 flex items-center space-x-2 group">
-          <AnimatedLogo className="h-8 w-8" />
+          <AnimatedCandleLogo className="h-8 w-8" />
           <span className="brand-logo text-2xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors hidden sm:block">
             Hadeer's Candle
           </span>
@@ -205,19 +249,22 @@ export function Header() {
           )}
 
           {/* Favorites */}
-          {!isMobile && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              asChild 
-              className="text-purple-600 hover:bg-purple-100 relative"
-            >
-              <Link href="/favorites">
-                <Heart className="h-5 w-5" />
-                <span className="sr-only">Favorites</span>
-              </Link>
-            </Button>
-          )}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            asChild 
+            className="text-purple-600 hover:bg-purple-100 relative"
+          >
+            <Link href="/favorites">
+              <Heart className="h-5 w-5" />
+              {favoriteItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-purple-600 text-xs text-white font-medium">
+                  {favoriteItemCount > 9 ? "9+" : favoriteItemCount}
+                </span>
+              )}
+              <span className="sr-only">Favorites</span>
+            </Link>
+          </Button>
 
           {/* Cart */}
           <Button 
@@ -284,6 +331,16 @@ export function Header() {
                 <DropdownMenuItem asChild className="focus:bg-purple-50 focus:text-purple-600">
                   <Link href="/orders" className="text-gray-800">
                     My Orders
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="focus:bg-purple-50 focus:text-purple-600">
+                  <Link href="/favorites" className="text-gray-800">
+                    My Favorites
+                    {favoriteItemCount > 0 && (
+                      <span className="ml-2 text-xs bg-purple-600 text-white rounded-full h-4 w-4 flex items-center justify-center">
+                        {favoriteItemCount}
+                      </span>
+                    )}
                   </Link>
                 </DropdownMenuItem>
                 {user.role === "admin" && (

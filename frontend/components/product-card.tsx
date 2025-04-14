@@ -1,13 +1,13 @@
 "use client"
 
-import type React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ShoppingCart, Heart, Star, ChevronRight } from "lucide-react"
+import { ShoppingCart, Heart, Star, ChevronRight, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/lib/cart-context"
 import { useAuth } from "@/lib/auth-context"
+import { useFavorites } from "@/lib/favorites-context"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
@@ -25,6 +25,7 @@ interface ProductCardProps {
     burnTime?: string
     ratings?: any[]
     averageRating?: number
+    isBestSeller?: boolean
   }
 }
 
@@ -32,6 +33,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const { toast } = useToast()
   const { addToCart } = useCart()
   const { user } = useAuth()
+  const { isFavorite, addFavorite, removeFavorite } = useFavorites()
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -62,74 +64,110 @@ export function ProductCard({ product }: ProductCardProps) {
     }
   }
 
-  const productImage = product.images?.[0] || `/placeholder.svg?height=400&width=400`
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (!user) {
+      toast({
+        title: "Please login",
+        description: "You need to login to add items to your favorites",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (isFavorite(product._id)) {
+      removeFavorite(product._id)
+      toast({
+        title: "Removed from favorites",
+        description: `${product.name} has been removed from your favorites`,
+        className: "border-purple-200 bg-purple-50 text-purple-800",
+      })
+    } else {
+      addFavorite(product._id)
+      toast({
+        title: "Added to favorites",
+        description: `${product.name} has been added to your favorites`,
+        className: "border-purple-200 bg-purple-50 text-purple-800",
+      })
+    }
+  }
+
+  const productImage = product.images?.[0] || `/placeholder.svg`
 
   return (
-    <Link
-      href={`/products/${product._id}`}
-      className="group relative block overflow-hidden rounded-lg border border-purple-100 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-1"
-    >
+    <div className="group relative block overflow-hidden rounded-lg border border-purple-100 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-1">
+      {/* Best Seller Badge */}
+      {product.isBestSeller && (
+        <div className="absolute top-2 left-2 z-10">
+          <Badge className="bg-amber-500 text-white hover:bg-amber-600 flex items-center">
+            <Award className="h-3 w-3 mr-1" />
+            Best Seller
+          </Badge>
+        </div>
+      )}
+
       {/* Favorite Button */}
       <Button
         variant="ghost"
         size="icon"
         className="absolute right-2 top-2 z-10 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm"
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          toast({
-            title: "Added to favorites",
-            description: `${product.name} has been added to your favorites`,
-            className: "border-purple-200 bg-purple-50 text-purple-800",
-          })
-        }}
+        onClick={handleFavoriteClick}
       >
-        <Heart className="h-4 w-4 fill-purple-100 text-purple-600 group-hover:fill-purple-200 transition-colors" />
+        <Heart className={cn(
+          "h-4 w-4 text-purple-600 transition-colors",
+          isFavorite(product._id) ? "fill-purple-600" : "fill-purple-100"
+        )} />
       </Button>
 
-      {/* Product Image */}
-      <div className="aspect-square overflow-hidden">
-        <Image
-          src={productImage}
-          alt={product.name}
-          width={400}
-          height={400}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          priority={false}
-          loading="lazy"
-        />
-      </div>
+      {/* Product Image Link */}
+      <Link href={`/products/${product._id}`} className="block">
+        <div className="aspect-square overflow-hidden">
+          <Image
+            src={productImage}
+            alt={product.name}
+            width={400}
+            height={400}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            priority={false}
+            loading="lazy"
+          />
+        </div>
+      </Link>
 
       {/* Product Details */}
       <div className="p-4">
-        {/* Badges */}
-        <div className="mb-2 flex flex-wrap gap-1">
-          {product.fragrance && (
+        <Link href={`/products/${product._id}`} className="block">
+          {/* Badges */}
+          <div className="mb-2 flex flex-wrap gap-1">
+            {product.fragrance && (
+              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                {product.fragrance}
+              </Badge>
+            )}
             <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
-              {product.fragrance}
+              {product.type}
             </Badge>
-          )}
-          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
-            {product.type}
-          </Badge>
-          {product.size && (
-            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
-              {product.size}
-            </Badge>
-          )}
-        </div>
+            {product.size && (
+              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                {product.size}
+              </Badge>
+            )}
+          </div>
 
-        {/* Product Name */}
-        <h3 className="font-semibold text-gray-800 group-hover:text-purple-700 transition-colors">
-          {product.name}
-        </h3>
+          {/* Product Name */}
+          <h3 className="font-semibold text-gray-800 group-hover:text-purple-700 transition-colors">
+            {product.name}
+          </h3>
 
-        {/* Additional Info */}
-        {product.burnTime && (
-          <p className="text-sm text-gray-500 mb-2">
-            <span className="font-medium">Burn Time:</span> {product.burnTime}
-          </p>
-        )}
+          {/* Additional Info */}
+          {product.burnTime && (
+            <p className="text-sm text-gray-500 mb-2">
+              <span className="font-medium">Burn Time:</span> {product.burnTime}
+            </p>
+          )}
+        </Link>
 
         {/* Price and Actions */}
         <div className="flex items-center justify-between">
@@ -161,7 +199,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </Button>
         </div>
 
-        {/* Quick View Button (appears on hover) */}
+        {/* Quick View Button */}
         <Button
           variant="outline"
           size="sm"
@@ -173,6 +211,6 @@ export function ProductCard({ product }: ProductCardProps) {
           </Link>
         </Button>
       </div>
-    </Link>
+    </div>
   )
 }

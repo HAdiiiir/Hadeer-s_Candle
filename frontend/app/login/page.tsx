@@ -1,12 +1,9 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,20 +11,27 @@ import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  })
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { login } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target
+    setFormData(prev => ({ ...prev, [id]: value }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      await login(email, password)
+      await login(formData.email, formData.password)
       toast({
         title: "Login successful",
         description: "You have been logged in successfully",
@@ -59,8 +63,8 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 placeholder="example@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={handleChange}
                 required
                 className="border-purple-200 focus:border-purple-400 focus:ring-purple-400"
               />
@@ -77,8 +81,8 @@ export default function LoginPage() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={handleChange}
                   required
                   className="border-purple-200 focus:border-purple-400 focus:ring-purple-400"
                 />

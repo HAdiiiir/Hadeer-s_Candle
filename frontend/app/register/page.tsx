@@ -1,11 +1,9 @@
 "use client"
 
-import type React from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, AlertCircle } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,6 +11,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/lib/auth-context"
 
 export default function RegisterPage() {
+  // Form state
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -21,11 +20,13 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [emailError, setEmailError] = useState("")
+
+  // Hooks
   const { register } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
 
-  // Validate email when it changes
+  // Email validation
   useEffect(() => {
     if (email && !validateEmail(email)) {
       setEmailError("Please enter a valid email address")
@@ -34,7 +35,6 @@ export default function RegisterPage() {
     }
   }, [email])
 
-  // Email validation function
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
@@ -43,7 +43,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Check email validity before submission
+    // Validation checks
     if (email && !validateEmail(email)) {
       setEmailError("Please enter a valid email address")
       return
@@ -51,8 +51,17 @@ export default function RegisterPage() {
 
     if (password !== confirmPassword) {
       toast({
-        title: "Passwords do not match",
-        description: "Please make sure your passwords match",
+        title: "Error",
+        description: "Passwords don't match",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters",
         variant: "destructive",
       })
       return
@@ -62,15 +71,17 @@ export default function RegisterPage() {
 
     try {
       await register({ name, email, password, phone })
+      
       toast({
         title: "Registration successful",
-        description: "Your account has been created successfully",
+        description: "Your account has been created",
       })
+      
       router.push("/")
     } catch (error: any) {
       toast({
         title: "Registration failed",
-        description: error.message || "Failed to create account",
+        description: error.message || "An error occurred",
         variant: "destructive",
       })
     } finally {
@@ -83,8 +94,8 @@ export default function RegisterPage() {
       <div className="container max-w-md">
         <div className="mx-auto w-full space-y-6 rounded-lg border bg-white p-8 shadow-sm">
           <div className="space-y-2 text-center">
-            <h1 className="text-3xl font-bold text-primary">Create an Account</h1>
-            <p className="text-gray-500">Enter your details to create a new account</p>
+            <h1 className="text-3xl font-bold text-purple-600">Create an Account</h1>
+            <p className="text-gray-500">Enter your details to register</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -172,7 +183,7 @@ export default function RegisterPage() {
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
                 id="confirmPassword"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}

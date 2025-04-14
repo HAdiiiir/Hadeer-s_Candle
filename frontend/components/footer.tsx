@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Facebook, Instagram, Twitter, Mail } from "lucide-react"
+import { Facebook, Instagram, Mail, Music2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -14,7 +14,7 @@ export function Footer() {
               <div className="h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center">
                 <span className="text-white font-bold text-xl">H</span>
               </div>
-              <h3 className="text-xl font-bold text-purple-600">Hadeer's Candle</h3>
+              <h3 className="text-xl font-bold text-purple-600">Haders Candle</h3>
             </div>
             <p className="text-sm text-gray-800 leading-relaxed">
               Premium handcrafted candles made with the finest natural materials for a luxurious and eco-friendly experience.
@@ -26,7 +26,7 @@ export function Footer() {
                 asChild
                 className="rounded-full border-purple-300 bg-white text-purple-600 hover:bg-purple-600 hover:text-white transition-all hover:scale-105"
               >
-                <Link href="https://facebook.com/hadeers-candle" target="_blank" rel="noopener noreferrer">
+                <Link href="https://www.facebook.com/share/16GZJ8AxAv/" target="_blank" rel="noopener noreferrer">
                   <Facebook className="h-5 w-5" />
                   <span className="sr-only">Facebook</span>
                 </Link>
@@ -37,7 +37,7 @@ export function Footer() {
                 asChild
                 className="rounded-full border-purple-300 bg-white text-purple-600 hover:bg-purple-600 hover:text-white transition-all hover:scale-105"
               >
-                <Link href="https://instagram.com/hadeers-candle" target="_blank" rel="noopener noreferrer">
+                <Link href="https://www.instagram.com/haders_candle?igsh=MXVyZzlvNnhmMWRidA==" target="_blank" rel="noopener noreferrer">
                   <Instagram className="h-5 w-5" />
                   <span className="sr-only">Instagram</span>
                 </Link>
@@ -48,9 +48,9 @@ export function Footer() {
                 asChild
                 className="rounded-full border-purple-300 bg-white text-purple-600 hover:bg-purple-600 hover:text-white transition-all hover:scale-105"
               >
-                <Link href="#" target="_blank" rel="noopener noreferrer">
-                  <Twitter className="h-5 w-5" />
-                  <span className="sr-only">Twitter</span>
+                <Link href="https://www.tiktok.com/@haders.candle?_t=ZS-8vVuvwz2Djj&_r=1" target="_blank" rel="noopener noreferrer">
+                  <Music2 className="h-5 w-5" />
+                  <span className="sr-only">TikTok</span>
                 </Link>
               </Button>
             </div>
@@ -199,7 +199,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-purple-100 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-600">
-            &copy; {new Date().getFullYear()} Hadeer's Candle. All rights reserved.
+            &copy; {new Date().getFullYear()} Haders Candle. All rights reserved.
           </p>
           <div className="flex items-center space-x-6">
             <Link href="/privacy" className="text-sm text-gray-600 hover:text-purple-600 transition-colors">
