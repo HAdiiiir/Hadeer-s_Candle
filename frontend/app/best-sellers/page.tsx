@@ -4,71 +4,117 @@ import { useEffect, useState } from 'react'
 import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft, Award, ShoppingBag, Star, Sparkles } from 'lucide-react'
+import { ArrowLeft, Award, ShoppingBag, Star } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const bestSellers = [
   {
-    _id: 'bs1',
-    name: 'Vanilla Dream',
-    price: 29.99,
-    type: "Candle",
-    images: ["/vanilla-candle.jpg"],
-    fragrance: "Sweet",
-    burnTime: "50 hours",
+    _id: "CP-GL-025",
+    name: "Clear Gel Wax Candle",
+    price: 650,
+    size: "300g",
+    type: "Gel Wax",
+    category: "Cup",
+    fragrance: "Ocean Breeze",
+    waxType: "Crystal Clear Gel",
+    burnTime: "35-40 hours",
+    description: "Crystal clear gel candle with refreshing Ocean Breeze scent and decorative seashell embeds.",
+    images: ["https://i.pinimg.com/474x/0a/4d/83/0a4d834a962a31b3450a4e91a664632e.jpg"],
     isBestSeller: true,
     rating: 4.9,
     ratings: [{}, {}, {}, {}] // 4 reviews
   },
   {
-    _id: 'bs2',
-    name: 'Lavender Serenity',
-    price: 32.99,
-    type: "Candle",
-    images: ["/lavender-candle.jpg"],
-    fragrance: "Floral",
-    burnTime: "45 hours",
+    _id: "CP-GL-024",
+    name: "Clear Gel Wax Candle",
+    price: 650,
+    size: "300g",
+    type: "Gel Wax",
+    category: "Cup",
+    fragrance: "Ocean Breeze",
+    waxType: "Crystal Clear Gel",
+    burnTime: "35-40 hours",
+    description: "Crystal clear gel candle with refreshing Ocean Breeze scent and decorative seashell embeds.",
+    images: ["https://i.pinimg.com/474x/d6/2f/50/d62f50a93f9229616e66ca024850814d.jpg"],
     isBestSeller: true,
     rating: 4.8,
     ratings: [{}, {}, {}] // 3 reviews
   },
   {
-    _id: 'bs3',
-    name: 'Sandalwood Mystique',
-    price: 34.99,
-    type: "Candle",
-    images: ["/sandalwood-candle.jpg"],
-    fragrance: "Woody",
-    burnTime: "55 hours",
+    _id: "CP-GL-023",
+    name: "Clear Gel Wax Candle",
+    price: 710,
+    size: "300g",
+    type: "Gel Wax",
+    category: "Cup",
+    fragrance: "Ocean Breeze",
+    waxType: "Crystal Clear Gel",
+    burnTime: "35-40 hours",
+    description: "Crystal clear gel candle with refreshing Ocean Breeze scent and decorative seashell embeds.",
+    images: ["https://i.pinimg.com/474x/3a/78/c9/3a78c9197fd3048ad9000dbc65e80a43.jpg"],
     isBestSeller: true,
     rating: 4.7,
     ratings: [{}, {}] // 2 reviews
   },
   {
-    _id: 'bs4',
-    name: 'Citrus Burst',
-    price: 27.99,
-    type: "Candle",
-    images: ["/citrus-candle.jpg"],
-    fragrance: "Fresh",
-    burnTime: "40 hours",
+    _id: "SH-SK-011",
+    name: "Skull Shaped Candle",
+    price: 210,
+    type: "Shaped Candle",
+    category: "Molded",
+    fragrance: "Black Orchid",
+    waxType: "Palm-Paraffin Blend",
+    burnTime: "6-8 hours",
+    description: "Edgy skull shaped candle with mysterious Black Orchid scent.",
+    images: ["https://i.pinimg.com/474x/38/1a/85/381a85cc95680915a1ecba9e349b67fd.jpg"],
     isBestSeller: true,
     rating: 4.6,
-    ratings: [{}] // 1 review
-  }
+    ratings: [{}] // 2 review
+  },
+  {
+    _id: "SH-RS-014",
+    name: "Rose Shaped Candle",
+    price: 170,
+    type: "Shaped Candle",
+    category: "Molded",
+    fragrance: "Damask Rose",
+    waxType: "Beeswax-Soy Blend",
+    burnTime: "2-3 hours",
+    description: "Exquisite rose-shaped candle with authentic Damask Rose perfume.",
+    images: ["https://i.pinimg.com/474x/98/01/44/98014458c7336f44ec850b5bba22beea.jpg"],
+    isBestSeller: true,
+    rating: 4.5,
+    ratings: [{}] // 4 review
+  },
+  {
+    _id: "SH-SH-013",
+    name: "Shell Shaped Candle",
+    price: 50,
+    type: "Shaped Candle",
+    category: "Molded",
+    fragrance: "Sea Salt",
+    waxType: "Palm Wax",
+    burnTime: "1-2 hours",
+    description: "Realistic seashell shaped candle with oceanic Sea Salt aroma.",
+    images: ["https://i.pinimg.com/736x/29/e3/84/29e38499eef6d5054d60091a46bc7b99.jpg"],
+    isBestSeller: true,
+    rating: 4.4,
+    ratings: [{}] // 3 review
+  },
+    // ... rest of your products
+
 ]
 
 export default function BestSellersPage() {
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null) // Fixed type here
 
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
-        // In production, replace with actual API call
         setIsLoading(false)
       } catch (err) {
-        setError('Failed to load products')
+        setError('Failed to load products') // Now this will work
         setIsLoading(false)
       }
     }, 800)
@@ -84,6 +130,8 @@ export default function BestSellersPage() {
       </Button>
     </div>
   )
+
+  // ... rest of your component remains the same
 
   return (
     <div className="container py-8 md:py-12">
@@ -119,7 +167,7 @@ export default function BestSellersPage() {
       {/* Product Grid */}
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
+          {[...Array(6)].map((_, i) => (
             <div key={i} className="space-y-4">
               <Skeleton className="h-64 w-full rounded-lg" />
               <Skeleton className="h-4 w-3/4" />
@@ -159,7 +207,7 @@ export default function BestSellersPage() {
                   ))}
                 </div>
                 <p className="text-gray-600 mb-4">
-                  "The Vanilla Dream candle fills my entire home with the most luxurious scent. It's become my signature fragrance!"
+                  "The Clear Gel candles are absolutely stunning! The ocean breeze scent is so refreshing and they look beautiful in my bathroom."
                 </p>
                 <p className="text-sm font-medium text-purple-800">- Sarah M.</p>
               </div>
@@ -171,7 +219,7 @@ export default function BestSellersPage() {
                   ))}
                 </div>
                 <p className="text-gray-600 mb-4">
-                  "I've tried many candles, but Lavender Serenity is truly special. The burn time is incredible and the scent is so authentic."
+                  "I bought the Skull Shaped candle as a gift for my goth friend and she loved it! The black orchid scent is mysterious and perfect."
                 </p>
                 <p className="text-sm font-medium text-purple-800">- James T.</p>
               </div>
@@ -183,7 +231,7 @@ export default function BestSellersPage() {
                   ))}
                 </div>
                 <p className="text-gray-600 mb-4">
-                  "Sandalwood Mystique is my go-to gift for friends and family. Everyone always asks where I got it from!"
+                  "The Rose Shaped candles are my go-to gifts for romantic occasions. They look so real and the Damask Rose fragrance is heavenly!"
                 </p>
                 <p className="text-sm font-medium text-purple-800">- Amina K.</p>
               </div>
@@ -196,7 +244,7 @@ export default function BestSellersPage() {
               Ready to Experience Our Best?
             </h2>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Join thousands of satisfied customers who have made these candles part of their daily rituals.
+              Join thousands of satisfied customers who love our premium candles.
             </p>
             <Button asChild className="bg-purple-600 hover:bg-purple-700 shadow-lg">
               <Link href="/products" className="flex items-center">

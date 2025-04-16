@@ -1,4 +1,5 @@
 import { ProductCard } from "@/components/product-card"
+import { useState } from "react"
 
 interface Product {
   _id: string
@@ -21,6 +22,22 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ products, isLoading = false }: ProductGridProps) {
+  const [sortOption, setSortOption] = useState<string>('featured')
+
+  const sortedProducts = [...products].sort((a, b) => {
+    switch (sortOption) {
+      case 'price-low-high':
+        return a.price - b.price
+      case 'price-high-low':
+        return b.price - a.price
+      case 'newest':
+        // Assuming you have a createdAt field - if not, you'll need to add it
+        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      default:
+        return 0 // Keep original order for 'featured'
+    }
+  })
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -48,15 +65,19 @@ export function ProductGrid({ products, isLoading = false }: ProductGridProps) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <p className="text-sm text-gray-500">Showing {products.length} products</p>
-        <select className="rounded-md border border-gray-300 px-3 py-1 text-sm">
-          <option>Sort by: Featured</option>
-          <option>Price: Low to High</option>
-          <option>Price: High to Low</option>
-          <option>Newest</option>
+        <select 
+          className="rounded-md border border-gray-300 px-3 py-1 text-sm"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="featured">Sort by: Featured</option>
+          <option value="price-low-high">Price: Low to High</option>
+          <option value="price-high-low">Price: High to Low</option>
+          <option value="newest">Newest</option>
         </select>
       </div>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
+        {sortedProducts.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>

@@ -36,7 +36,7 @@ export default function OurStory() {
           <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
             <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg">
               <Image
-                src="/founder.jpg"
+                src="https://i.pinimg.com/736x/d4/9d/de/d49ddefe33f958ce3b77a2e5d24343f8.jpg"
                 alt="Founder making candles"
                 fill
                 className="object-cover"

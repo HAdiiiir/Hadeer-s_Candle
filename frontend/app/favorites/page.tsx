@@ -1,20 +1,46 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { useFavorites } from '@/lib/favorites-context'
 import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { ArrowLeft, Heart, Sparkles, ShoppingBag } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 
-// Simple Skeleton component replacement
+// Skeleton component
 const Skeleton = ({ className }: { className: string }) => (
   <div className={`bg-gray-100 animate-pulse rounded-md ${className}`} />
 )
 
+// Custom hook for favorites using localStorage
+const useLocalFavorites = () => {
+  const [favorites, setFavorites] = useState<string[]>([])
+
+  // Initialize favorites from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedFavorites = localStorage.getItem('guestFavorites')
+      setFavorites(storedFavorites ? JSON.parse(storedFavorites) : [])
+    }
+  }, [])
+
+  const addFavorite = (productId: string) => {
+    const updatedFavorites = [...favorites, productId]
+    setFavorites(updatedFavorites)
+    localStorage.setItem('guestFavorites', JSON.stringify(updatedFavorites))
+  }
+
+  const removeFavorite = (productId: string) => {
+    const updatedFavorites = favorites.filter(id => id !== productId)
+    setFavorites(updatedFavorites)
+    localStorage.setItem('guestFavorites', JSON.stringify(updatedFavorites))
+  }
+
+  return { favorites, addFavorite, removeFavorite }
+}
+
 export default function FavoritesPage() {
-  const { favorites, removeFavorite } = useFavorites()
+  const { favorites, removeFavorite } = useLocalFavorites()
   const [isLoading, setIsLoading] = useState(true)
   const [recommendedProducts, setRecommendedProducts] = useState([])
 

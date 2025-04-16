@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Heart, Minus, Plus, Share2, ShoppingCart, Star, Info } from "lucide-react"
-import { useParams } from "next/navigation"
+import { Heart, Minus, Plus, Share2, ShoppingCart, Star, Info, Award } from "lucide-react"
+import { useParams, notFound } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -116,7 +116,7 @@ const fragranceDescriptions = {
     description: "A luxurious, romantic blend with rich rose and subtle spice notes.",
     notes: ["Top: Damask Rose", "Middle: Peony", "Base: Musk"],
     bestFor: "Bedrooms, living rooms, special occasions",
-  },
+  }
 }
 
 export default function ProductPage() {
@@ -234,19 +234,7 @@ export default function ProductPage() {
   }
 
   if (!product) {
-    return (
-      <div className="container px-4 py-8 md:px-6 md:py-12">
-        <div className="flex flex-col items-center justify-center py-12 space-y-4">
-          <div className="bg-purple-100 p-4 rounded-full">
-            <Info className="h-8 w-8 text-purple-600" />
-          </div>
-          <p className="text-lg text-gray-600">Product not found</p>
-          <Button asChild className="rounded-full bg-purple-600 hover:bg-purple-700">
-            <Link href="/products">Browse Our Collection</Link>
-          </Button>
-        </div>
-      </div>
-    )
+    return notFound()
   }
 
   const productImage = product.images?.[selectedImage] || `/placeholder.svg?height=800&width=800`
@@ -298,6 +286,12 @@ export default function ProductPage() {
                 </Badge>
               )}
               {product.isNew && <Badge className="bg-green-100 text-green-800">New Arrival</Badge>}
+              {product.isBestSeller && (
+                <Badge className="bg-amber-500 text-white hover:bg-amber-600 flex items-center">
+                  <Award className="h-3 w-3 mr-1" />
+                  Best Seller
+                </Badge>
+              )}
             </div>
 
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">{product.name}</h1>
@@ -314,7 +308,11 @@ export default function ProductPage() {
                 ))}
               </div>
               <span className="ml-2 text-sm text-gray-500">({product.ratings?.length || 0} reviews)</span>
-              {product.stock > 0 && <span className="ml-4 text-sm font-medium text-green-600">In Stock</span>}
+              {product.stock > 0 ? (
+                <span className="ml-4 text-sm font-medium text-green-600">In Stock</span>
+              ) : (
+                <span className="ml-4 text-sm font-medium text-red-600">Out of Stock</span>
+              )}
             </div>
           </div>
 

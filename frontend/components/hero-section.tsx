@@ -9,10 +9,10 @@ export function HeroSection() {
       {/* Gradient Overlay */}
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-purple-50/80 via-purple-50/50 to-purple-50/30" />
       
-      {/* Background Image */}
+      {/* Background Image - Now using local image */}
       <div className="relative h-[600px] w-full">
         <Image 
-          src="/images/hero-banner.png" 
+          src="/images/hero-banner.jpg" 
           alt="Hadeer's Candle Collection" 
           fill 
           className="object-cover object-center"
@@ -22,7 +22,7 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Content */}
+      {/* Rest of your component remains exactly the same */}
       <div className="absolute inset-0 z-20 flex items-center">
         <div className="container px-4 md:px-6">
           <div className="max-w-2xl space-y-6">

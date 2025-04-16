@@ -1,9 +1,23 @@
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ProductCard } from "@/components/product-card"
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ProductCard } from "@/components/product-card";
 
-const featuredProducts = [
+interface CandleProduct {
+  _id: string;
+  name: string;
+  price: number;
+  size?: string;
+  type: string;
+  category: string;
+  fragrance: string;
+  waxType: string;
+  burnTime: string;
+  description: string;
+  images: string[];
+}
+
+const featuredProducts: CandleProduct[] = [
   {
     _id: "CP-GL-001",
     name: "Luxury Gel Wax Candle",
@@ -14,8 +28,8 @@ const featuredProducts = [
     fragrance: "Vanilla & Amber",
     waxType: "Premium Crystal Gel",
     burnTime: "20-25 hours",
-    description: "Elegant transparent gel candle in IKEA glass, infused with our signature Vanilla & Amber fragrance blend. Perfect for creating a cozy atmosphere in small spaces.",
-    images: ["/candles/gel-vanilla-amber.jpg"],
+    description: "Elegant transparent gel candle in glass, infused with our signature Vanilla & Amber fragrance blend.",
+    images: ["https://i.pinimg.com/474x/66/4f/f7/664ff7120a4fe85e6a29cb2bb5d547b6.jpg"],
   },
   {
     _id: "CP-GL-002",
@@ -27,8 +41,8 @@ const featuredProducts = [
     fragrance: "Ocean Breeze",
     waxType: "Crystal Clear Gel",
     burnTime: "35-40 hours",
-    description: "Crystal clear gel candle in IKEA tumbler with refreshing Ocean Breeze scent. Features decorative seashell embeds. Ideal for bathrooms and coastal-themed decor.",
-    images: ["/candles/gel-ocean.jpg"],
+    description: "Crystal clear gel candle with refreshing Ocean Breeze scent and decorative seashell embeds.",
+    images: ["https://i.pinimg.com/474x/73/02/fb/7302fbc2de81e6d75d305f745f9d560f.jpg"],
   },
   {
     _id: "CP-SY-003",
@@ -40,8 +54,8 @@ const featuredProducts = [
     fragrance: "Lavender & Chamomile",
     waxType: "100% Soy Wax",
     burnTime: "20-25 hours",
-    description: "Natural soy wax candle in IKEA glass, blended with calming Lavender and Chamomile essential oils. Perfect for bedtime relaxation and meditation spaces.",
-    images: ["/candles/soy-lavender.jpg"],
+    description: "Natural soy wax candle blended with calming Lavender and Chamomile essential oils.",
+    images: ["https://i.pinimg.com/474x/c2/2a/11/c22a1180ac440ed1f7b13129b63ebc27.jpg"],
   },
   {
     _id: "CP-SY-004",
@@ -53,8 +67,8 @@ const featuredProducts = [
     fragrance: "Sandalwood",
     waxType: "Organic Soy Wax",
     burnTime: "35-40 hours",
-    description: "Premium soy candle in IKEA jar with exotic Sandalwood fragrance. Features wooden wick for crackling fireplace effect. Great for living rooms and offices.",
-    images: ["/candles/soy-sandalwood.jpg"],
+    description: "Premium soy candle with exotic Sandalwood fragrance and wooden wick for crackling effect.",
+    images: ["https://i.pinimg.com/474x/e1/fc/3d/e1fc3da4b8695718be3baa5553a19139.jpg"],
   },
   {
     _id: "CP-SY-005",
@@ -66,8 +80,8 @@ const featuredProducts = [
     fragrance: "Vanilla Bean",
     waxType: "Soy Wax Blend",
     burnTime: "50-55 hours",
-    description: "Extra-large soy candle in IKEA container with rich Vanilla Bean aroma. Long-lasting burn time makes it perfect for frequent use in large rooms.",
-    images: ["/candles/soy-vanilla.jpg"],
+    description: "Extra-large soy candle with rich Vanilla Bean aroma for large rooms.",
+    images: ["https://i.pinimg.com/474x/a5/e3/51/a5e3512de14b6007eadb0fffb652f745.jpg"],
   },
   {
     _id: "CP-PL-006",
@@ -79,8 +93,8 @@ const featuredProducts = [
     fragrance: "Citrus & Bergamot",
     waxType: "Sustainable Palm Wax",
     burnTime: "20-25 hours",
-    description: "Eco-friendly palm wax candle in IKEA glass with energizing Citrus & Bergamot blend. Features unique crystalline pattern when solid.",
-    images: ["/candles/palm-citrus.jpg"],
+    description: "Eco-friendly palm wax candle with energizing Citrus & Bergamot blend.",
+    images: ["https://i.pinimg.com/474x/cd/08/c8/cd08c8e4ad1baf40f75006cf5907a2d0.jpg"],
   },
   {
     _id: "CP-PL-007",
@@ -92,8 +106,8 @@ const featuredProducts = [
     fragrance: "Rose & Musk",
     waxType: "Premium Palm Wax",
     burnTime: "60-65 hours",
-    description: "Luxury palm wax candle in large IKEA vessel with romantic Rose & Musk perfume. Beautiful feathery crystallization pattern develops as it cools.",
-    images: ["/candles/palm-rose.jpg"],
+    description: "Luxury palm wax candle with romantic Rose & Musk perfume.",
+    images: ["https://i.pinimg.com/474x/e9/2c/64/e92c64a9419b290bdaafa0b0aff852f2.jpg"],
   },
   {
     _id: "SH-TD-008",
@@ -104,8 +118,8 @@ const featuredProducts = [
     fragrance: "Cinnamon & Spice",
     waxType: "Soy-Palm Blend",
     burnTime: "4-6 hours",
-    description: "Adorable teddy bear shaped candle with warm Cinnamon & Spice fragrance. Makes a perfect gift for children's rooms or baby showers. Hand-poured with care.",
-    images: ["/candles/teddy-bear.jpg"],
+    description: "Adorable teddy bear shaped candle with warm Cinnamon & Spice fragrance.",
+    images: ["https://i.pinimg.com/474x/e6/5b/d5/e65bd5da00ba6d82719cb7410399ca82.jpg"],
   },
   {
     _id: "SH-BR-009",
@@ -116,8 +130,8 @@ const featuredProducts = [
     fragrance: "Jasmine & Lily",
     waxType: "Premium Paraffin",
     burnTime: "5-7 hours",
-    description: "Elegant bride doll candle for weddings and anniversaries. Scented with romantic Jasmine & Lily bouquet. Traditional Egyptian design with intricate details.",
-    images: ["/candles/bride-doll.jpg"],
+    description: "Elegant bride doll candle for weddings and anniversaries.",
+    images: ["https://i.pinimg.com/474x/21/a8/5d/21a85d0df504e6096ca4be5627b12f3a.jpg"],
   },
   {
     _id: "SH-PD-010",
@@ -128,8 +142,8 @@ const featuredProducts = [
     fragrance: "Green Tea",
     waxType: "Soy Wax",
     burnTime: "4-5 hours",
-    description: "Playful panda shaped candle with refreshing Green Tea fragrance. Features black and white color details. Great for kids' rooms or as desk decor.",
-    images: ["/candles/panda.jpg"],
+    description: "Playful panda shaped candle with refreshing Green Tea fragrance.",
+    images: ["https://i.pinimg.com/474x/3b/55/2b/3b552b7edb38558fb473d7f170413ae5.jpg"],
   },
   {
     _id: "SH-SK-011",
@@ -140,20 +154,20 @@ const featuredProducts = [
     fragrance: "Black Orchid",
     waxType: "Palm-Paraffin Blend",
     burnTime: "6-8 hours",
-    description: "Edgy skull shaped candle with mysterious Black Orchid scent. Detailed mold captures realistic features. Popular for Halloween and Gothic decor.",
-    images: ["/candles/skull.jpg"],
+    description: "Edgy skull shaped candle with mysterious Black Orchid scent.",
+    images: ["https://i.pinimg.com/474x/38/1a/85/381a85cc95680915a1ecba9e349b67fd.jpg"],
   },
   {
     _id: "SH-BL-012",
     name: "Ball Shaped Candle",
-    price:  310,
+    price: 310,
     type: "Shaped Candle",
     category: "Molded",
     fragrance: "Fresh Cotton",
     waxType: "Soy Wax",
     burnTime: "9-11 hours",
-    description: "Sleek spherical candle with clean Fresh Cotton fragrance. Minimalist design fits any decor style. Available in multiple pastel color options.",
-    images: ["/candles/ball.jpg"],
+    description: "Sleek spherical candle with clean Fresh Cotton fragrance.",
+    images: ["https://i.pinimg.com/474x/b8/ce/a3/b8cea390b5d394bbbb59ab8d37ffd985.jpg"],
   },
   {
     _id: "SH-SH-013",
@@ -164,8 +178,8 @@ const featuredProducts = [
     fragrance: "Sea Salt",
     waxType: "Palm Wax",
     burnTime: "1-2 hours",
-    description: "Realistic seashell shaped candle with oceanic Sea Salt aroma. Features natural shell texture and pearlescent finish. Perfect for beach-themed decor.",
-    images: ["/candles/shell.jpg"],
+    description: "Realistic seashell shaped candle with oceanic Sea Salt aroma.",
+    images: ["https://i.pinimg.com/736x/29/e3/84/29e38499eef6d5054d60091a46bc7b99.jpg"],
   },
   {
     _id: "SH-RS-014",
@@ -176,8 +190,8 @@ const featuredProducts = [
     fragrance: "Damask Rose",
     waxType: "Beeswax-Soy Blend",
     burnTime: "2-3 hours",
-    description: "Exquisite rose-shaped candle with authentic Damask Rose perfume. Each petal is hand-shaped for realistic appearance. Romantic gift for special occasions.",
-    images: ["/candles/rose.jpg"],
+    description: "Exquisite rose-shaped candle with authentic Damask Rose perfume.",
+    images: ["https://i.pinimg.com/474x/98/01/44/98014458c7336f44ec850b5bba22beea.jpg"],
   },
   {
     _id: "SH-SF-015",
@@ -188,8 +202,8 @@ const featuredProducts = [
     fragrance: "Honey & Nectar",
     waxType: "Soy Wax",
     burnTime: "1-2 hours",
-    description: "Cheerful sunflower shaped candle with sweet Honey & Nectar scent. Vibrant yellow petals with brown center. Brings summer vibes to any room.",
-    images: ["/candles/sunflower.jpg"],
+    description: "Cheerful sunflower shaped candle with sweet Honey & Nectar scent.",
+    images: ["https://i.pinimg.com/474x/f6/4b/52/f64b52fab8fce0b0d080dd1c487f8bcf.jpg"],
   },
   {
     _id: "BB-LG-016",
@@ -201,8 +215,8 @@ const featuredProducts = [
     fragrance: "Amber & Oud",
     waxType: "Paraffin-Soy Blend",
     burnTime: "3-4 hours",
-    description: "Statement bubble candle with luxurious Amber & Oud fragrance. Unique textured surface creates beautiful light patterns. Makes a dramatic centerpiece.",
-    images: ["/candles/bubble-large.jpg"],
+    description: "Statement bubble candle with luxurious Amber & Oud fragrance.",
+    images: ["https://i.pinimg.com/474x/07/76/a8/0776a8956a9d7f348e9b9b4bd7b46610.jpg"],
   },
   {
     _id: "BB-SM-017",
@@ -214,8 +228,8 @@ const featuredProducts = [
     fragrance: "Lemon Zest",
     waxType: "Soy Wax",
     burnTime: "1-2 hours",
-    description: "Playful bubble candle with zesty Lemon Zest fragrance. Smaller version of our popular bubble design. Great for grouping or as accent pieces.",
-    images: ["/candles/bubble-small.jpg"],
+    description: "Playful bubble candle with zesty Lemon Zest fragrance.",
+    images: ["https://i.pinimg.com/474x/59/ab/8a/59ab8a84daba472521a3effc9ba69802.jpg"],
   },
   {
     _id: "CP-SY-018",
@@ -226,9 +240,9 @@ const featuredProducts = [
     category: "Cup",
     fragrance: "Fresh Linen",
     waxType: "100% Soy Wax",
-    burnTime: "10-15 hours",
-    description: "Classic soy candle in IKEA glass with clean Fresh Linen scent. Simple and versatile for any room. Cotton wick for clean burn.",
-    images: ["/candles/cup-65g.jpg"],
+    burnTime: "15-20 hours",
+    description: "Classic soy candle with clean Fresh Linen scent.",
+    images: ["https://i.pinimg.com/736x/f7/7f/b8/f77fb81380abb8226a5957263ad7b480.jpg"],
   },
   {
     _id: "CP-PL-019",
@@ -239,9 +253,9 @@ const featuredProducts = [
     category: "Cup",
     fragrance: "Coconut Milk",
     waxType: "Sustainable Palm Wax",
-    burnTime: "15-17 hours",
-    description: "Tropical-inspired palm wax candle in IKEA jar with creamy Coconut Milk fragrance. Features natural crystalline surface pattern.",
-    images: ["/candles/cup-165g.jpg"],
+    burnTime: "20-25 hours",
+    description: "Tropical-inspired palm wax candle with creamy Coconut Milk fragrance.",
+    images: ["https://i.pinimg.com/474x/4a/c8/19/4ac819ef0f52d06d0b2b91cfd3c5e137.jpg"],
   },
   {
     _id: "CP-SY-020",
@@ -252,9 +266,9 @@ const featuredProducts = [
     category: "Cup",
     fragrance: "Vanilla Latte",
     waxType: "Soy Wax Blend",
-    burnTime: "15-20 hours",
-    description: "Large soy candle in IKEA container with comforting Vanilla Latte aroma. Perfect for coffee lovers and cozy winter evenings.",
-    images: ["/candles/cup-275g.jpg"],
+    burnTime: "30-35 hours",
+    description: "Large soy candle with comforting Vanilla Latte aroma.",
+    images: ["https://i.pinimg.com/474x/6c/b1/29/6cb129f0e6e4ebd50aec2fba6bedb0df.jpg"],
   },
   {
     _id: "CP-PL-021",
@@ -265,9 +279,9 @@ const featuredProducts = [
     category: "Cup",
     fragrance: "Suede & Musk",
     waxType: "Premium Palm Wax",
-    burnTime: "20-30 hours",
-    description: "Luxury palm wax candle in large IKEA vessel with sophisticated Suede & Musk fragrance. Elegant masculine scent for offices and studies.",
-    images: ["/candles/cup-300g.jpg"],
+    burnTime: "40-45 hours",
+    description: "Luxury palm wax candle with sophisticated Suede & Musk fragrance.",
+    images: ["https://i.pinimg.com/474x/48/0d/6a/480d6a28128b5e1ea0a0f6b2e80e3e78.jpg"],
   },
   {
     _id: "CP-GL-022",
@@ -278,11 +292,76 @@ const featuredProducts = [
     category: "Cup",
     fragrance: "Blue Agave",
     waxType: "Crystal Gel",
-    burnTime: "8-10 hours",
-    description: "Extra-large gel candle in IKEA glass with exotic Blue Agave scent. Can be customized with decorative embeds. Makes a stunning gift.",
-    images: ["/candles/cup-320g.jpg"],
-  }
-]
+    burnTime: "10-15 hours",
+    description: "Extra-large gel candle with exotic Blue Agave scent.",
+    images: ["https://i.pinimg.com/474x/4e/e6/e7/4ee6e7aa7173a88b77559c5012267012.jpg"],
+  },
+  {
+    _id: "CP-GL-023",
+    name: "Clear Gel Wax Candle",
+    price: 710,
+    size: "300g",
+    type: "Gel Wax",
+    category: "Cup",
+    fragrance: "Ocean Breeze",
+    waxType: "Crystal Clear Gel",
+    burnTime: "35-40 hours",
+    description: "Crystal clear gel candle with refreshing Ocean Breeze scent and decorative seashell embeds.",
+    images: ["https://i.pinimg.com/474x/3a/78/c9/3a78c9197fd3048ad9000dbc65e80a43.jpg"],
+  },
+  {
+    _id: "CP-GL-024",
+    name: "Clear Gel Wax Candle",
+    price: 650,
+    size: "300g",
+    type: "Gel Wax",
+    category: "Cup",
+    fragrance: "Ocean Breeze",
+    waxType: "Crystal Clear Gel",
+    burnTime: "35-40 hours",
+    description: "Crystal clear gel candle with refreshing Ocean Breeze scent and decorative seashell embeds.",
+    images: ["https://i.pinimg.com/474x/d6/2f/50/d62f50a93f9229616e66ca024850814d.jpg"],
+  },
+  {
+    _id: "CP-GL-025",
+    name: "Clear Gel Wax Candle",
+    price: 650,
+    size: "300g",
+    type: "Gel Wax",
+    category: "Cup",
+    fragrance: "Ocean Breeze",
+    waxType: "Crystal Clear Gel",
+    burnTime: "35-40 hours",
+    description: "Crystal clear gel candle with refreshing Ocean Breeze scent and decorative seashell embeds.",
+    images: ["https://i.pinimg.com/474x/0a/4d/83/0a4d834a962a31b3450a4e91a664632e.jpg"],
+  },
+  {
+    _id: "BB-SM-026",
+    name: "Square-shaped Candle",
+    price: 190,
+    size: "165g",
+    type: "Square-shaped Gel wax Candle",
+    category: "Special",
+    fragrance: "Lemon Zest",
+    waxType: "Soy Wax",
+    burnTime: "3-4 hours",
+    description: "Playful bubble candle with zesty Lemon Zest fragrance.",
+    images: ["https://i.pinimg.com/474x/5e/6c/43/5e6c4368f5c491193482e2920fe0a0f1.jpg"],
+  },
+  {
+    _id: "CP-PL-027",
+    name: "Palm Cup Candle (300g)",
+    price: 600,
+    size: "300g",
+    type: "Cup Candle",
+    category: "Cup",
+    fragrance: "Suede & Musk",
+    waxType: "Premium Palm Wax",
+    burnTime: "40-45 hours",
+    description: "Luxury palm wax candle with sophisticated Suede & Musk fragrance.",
+    images: ["https://i.pinimg.com/736x/d9/9e/fd/d99efd0aa56362d580c04d829fdacaed.jpg"],
+  },
+];
 
 export function FeaturedProducts() {
   return (
@@ -296,7 +375,7 @@ export function FeaturedProducts() {
               </span>
             </h2>
             <p className="max-w-[900px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Discover our premium candles, each hand-poured with care in IKEA glassware and infused with exquisite fragrance blends
+              Discover our premium candles, each hand-poured with care and infused with exquisite fragrance blends
             </p>
           </div>
         </div>
@@ -331,7 +410,6 @@ export function FeaturedProducts() {
             <div key={product._id} className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md">
               <ProductCard product={product} />
               
-              {/* Enhanced Product Details */}
               <div className="p-4 pt-2">
                 <div className="flex justify-between items-start">
                   <div>
