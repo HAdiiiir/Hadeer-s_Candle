@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronDown, Filter, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -8,10 +8,16 @@ import { Slider } from "@/components/ui/slider"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
 
-export function SearchFilters() {
+interface SearchFiltersProps {
+  products: any[] // Replace with your actual product type
+  onFilter: (filteredProducts: any[]) => void
+}
+
+export function SearchFilters({ products, onFilter }: SearchFiltersProps) {
   const [priceRange, setPriceRange] = useState([200, 800])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [isFiltered, setIsFiltered] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   const candleTypes = [
     { id: "gel", label: "Gel Wax" },
@@ -33,7 +39,31 @@ export function SearchFilters() {
     setPriceRange([200, 800])
     setSelectedTypes([])
     setIsFiltered(false)
+    onFilter(products) // Reset to show all products
   }
+
+  const applyFilters = () => {
+    const filtered = products.filter(product => {
+      // Price range filter
+      const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1]
+      
+      // Type filter (if any types are selected)
+      const typeMatch = selectedTypes.length === 0 || 
+                        selectedTypes.includes(product.type.toLowerCase())
+      
+      return priceMatch && typeMatch
+    })
+    
+    onFilter(filtered)
+    setIsOpen(false)
+  }
+
+  // Apply filters whenever price range or types change
+  useEffect(() => {
+    if (isFiltered) {
+      applyFilters()
+    }
+  }, [priceRange, selectedTypes])
 
   return (
     <div className="space-y-6 p-4 border border-purple-100 rounded-lg bg-purple-50/30">
@@ -68,7 +98,7 @@ export function SearchFilters() {
         <CollapsibleContent className="pt-4 px-2">
           <div className="space-y-4">
             <Slider
-              defaultValue={priceRange}
+              value={priceRange}
               min={200}
               max={1000}
               step={10}
@@ -121,6 +151,7 @@ export function SearchFilters() {
           !isFiltered && "opacity-50 pointer-events-none"
         )}
         disabled={!isFiltered}
+        onClick={applyFilters}
       >
         Apply Filters
       </Button>

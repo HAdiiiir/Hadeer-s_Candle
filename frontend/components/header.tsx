@@ -19,29 +19,22 @@ import { useCart } from "@/lib/cart-context"
 import { useFavorites } from "@/lib/favorites-context"
 import { cn } from "@/lib/utils"
 
-// New Animated Candle Logo Component
 function AnimatedCandleLogo({ className }: { className?: string }) {
   return (
     <div className={cn("relative h-8 w-8", className)}>
-      {/* Candle Flame */}
       <div className="absolute top-0 left-1/2 transform -translate-x-1/2">
         <div className="relative h-4 w-3">
-          {/* Flame core */}
           <div className="absolute inset-0 bg-yellow-300 rounded-full blur-[1px] animate-pulse" />
-          {/* Flame outer */}
           <div className="absolute inset-0 bg-yellow-200 rounded-full opacity-70 animate-ping" style={{ animationDuration: '2s' }} />
         </div>
       </div>
       
-      {/* Candle Wax */}
       <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-6 h-5 bg-gradient-to-b from-purple-500 to-purple-700 rounded-sm">
-        {/* Wax drips */}
         <div className="absolute -left-0.5 top-1 w-1 h-1 bg-purple-400 rounded-full" />
         <div className="absolute -right-0.5 top-2 w-1 h-1 bg-purple-400 rounded-full" />
         <div className="absolute left-0.5 top-3 w-1 h-1 bg-purple-300 rounded-full" />
       </div>
       
-      {/* Candle Base */}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-7 h-2 bg-purple-800 rounded-b-full" />
     </div>
   )
@@ -51,17 +44,18 @@ export function Header() {
   const isMobile = useMobile()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { user, logout } = useAuth()
-  const { items } = useCart()
-  const { favorites } = useFavorites()
+  const { items = [] } = useCart() // Default empty array if undefined
+  const { favorites = [] } = useFavorites() // Default empty array if undefined
 
-  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0)
-  const favoriteItemCount = favorites.length
+  // Safely calculate counts
+  const cartItemCount = items?.reduce((total, item) => total + (item?.quantity || 0), 0) || 0
+  const favoriteItemCount = favorites?.length || 0
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-purple-50/90 backdrop-blur-md shadow-sm">
       <div className="container flex h-20 items-center px-4 md:px-6">
         {/* Mobile Menu */}
-        {isMobile ? (
+        {isMobile && (
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="mr-2 text-purple-600 hover:bg-purple-100">
@@ -79,47 +73,29 @@ export function Header() {
                 </Link>
               </div>
               <nav className="flex flex-col gap-4 px-4">
-                <Link 
-                  href="/" 
-                  className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                >
+                <Link href="/" className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center">
                   <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                   Home
                 </Link>
-                <Link 
-                  href="/products" 
-                  className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                >
+                <Link href="/products" className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center">
                   <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                   All Products
                 </Link>
-                <Link
-                  href="/products?category=Cup"
-                  className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                >
+                <Link href="/products?category=Cup" className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center">
                   <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                   Cup Candles
                 </Link>
-                <Link
-                  href="/products?category=Molded"
-                  className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                >
+                <Link href="/products?category=Molded" className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center">
                   <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                   Shaped Candles
                 </Link>
                 {user && (
                   <>
-                    <Link 
-                      href="/orders" 
-                      className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                    >
+                    <Link href="/orders" className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center">
                       <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                       My Orders
                     </Link>
-                    <Link 
-                      href="/favorites" 
-                      className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                    >
+                    <Link href="/favorites" className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center">
                       <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                       My Favorites
                       {favoriteItemCount > 0 && (
@@ -131,19 +107,12 @@ export function Header() {
                   </>
                 )}
                 {!user ? (
-                  <Link 
-                    href="/login" 
-                    className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center"
-                    >
+                  <Link href="/login" className="text-lg font-medium text-gray-800 hover:text-purple-600 transition-colors flex items-center">
                     <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                     Login
                   </Link>
                 ) : (
-                  <Button 
-                    variant="ghost" 
-                    onClick={logout} 
-                    className="justify-start px-0 text-lg font-medium text-gray-800 hover:text-purple-600"
-                  >
+                  <Button variant="ghost" onClick={logout} className="justify-start px-0 text-lg font-medium text-gray-800 hover:text-purple-600">
                     <span className="w-2 h-2 bg-purple-200 rounded-full mr-3"></span>
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
@@ -152,7 +121,7 @@ export function Header() {
               </nav>
             </SheetContent>
           </Sheet>
-        ) : null}
+        )}
 
         {/* Brand Logo */}
         <Link href="/" className="mr-6 flex items-center space-x-2 group">
@@ -195,22 +164,13 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link 
-              href="/about" 
-              className="text-sm font-medium text-gray-800 hover:text-purple-600 transition-colors"
-            >
+            <Link href="/about" className="text-sm font-medium text-gray-800 hover:text-purple-600 transition-colors">
               Our Story
             </Link>
-            <Link 
-              href="/blog" 
-              className="text-sm font-medium text-gray-800 hover:text-purple-600 transition-colors"
-            >
+            <Link href="/blog" className="text-sm font-medium text-gray-800 hover:text-purple-600 transition-colors">
               Candle Care
             </Link>
-            <Link 
-              href="/contact" 
-              className="text-sm font-medium text-gray-800 hover:text-purple-600 transition-colors"
-            >
+            <Link href="/contact" className="text-sm font-medium text-gray-800 hover:text-purple-600 transition-colors">
               Contact
             </Link>
           </nav>
@@ -300,11 +260,7 @@ export function Header() {
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-purple-600 hover:bg-purple-100"
-                >
+                <Button variant="ghost" size="icon" className="text-purple-600 hover:bg-purple-100">
                   <div className="relative">
                     <User className="h-5 w-5" />
                     <span className="absolute -bottom-1 -right-1 flex h-2 w-2">
@@ -315,10 +271,7 @@ export function Header() {
                   <span className="sr-only">User menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                className="bg-white border border-purple-100 shadow-lg rounded-lg p-2 min-w-[200px]"
-              >
+              <DropdownMenuContent align="end" className="bg-white border border-purple-100 shadow-lg rounded-lg p-2 min-w-[200px]">
                 <div className="px-2 py-1.5 text-sm font-medium text-gray-800">
                   {user.email}
                 </div>
@@ -351,10 +304,7 @@ export function Header() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator className="bg-purple-100" />
-                <DropdownMenuItem 
-                  onClick={logout} 
-                  className="text-gray-800 focus:bg-purple-50 focus:text-purple-600"
-                >
+                <DropdownMenuItem onClick={logout} className="text-gray-800 focus:bg-purple-50 focus:text-purple-600">
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </DropdownMenuItem>
